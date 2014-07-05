@@ -97,10 +97,23 @@ class MenusController extends AppController {
 
 		$conditions = $this->_createAdminIndexConditions($this->request->data);
 
-		// TODO CSVドライバーが複数の並び替えフィールドを指定できないがtypeを指定したい
-		$listDatas = $this->Menu->find('all', array('conditions' => $conditions, 'order' => 'Menu.sort'));
+		$treeList = $this->Menu->generateTreeList($conditions);
+		$menus = $this->Menu->find('all', array('conditions' => $conditions, 'order' => 'Menu.lft'));
+		
+		$datas = array();
+		foreach ($menus as $menu) {
+			$name = $treeList[$menu['Menu']['id']];
+			$menu['Menu']['prefix'] = '';
+			if (preg_match("/^([_]+)/i", $name, $matches)) {
+				$menu['Menu']['prefix'] = str_replace('_', '&nbsp&nbsp&nbsp', $matches[1])  . '└';
+				$menu['Menu']['depth'] = strlen($matches[1]);
+			} else {
+				$menu['Menu']['depth'] = 0;
+			}
+			$datas[] = $menu;
+		}
 
-		$this->set('listDatas', $listDatas);
+		$this->set('listDatas', $datas);
 
 		if ($this->RequestHandler->isAjax() || !empty($this->request->query['ajax'])) {
 			$this->render('ajax_index');

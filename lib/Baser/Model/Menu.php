@@ -45,7 +45,7 @@ class Menu extends AppModel {
  * @var array
  * @access public
  */
-	public $actsAs = array('BcCache');
+	public $actsAs = array('Tree', 'BcCache');
 
 /**
  * バリデーション
@@ -76,8 +76,17 @@ class Menu extends AppModel {
  * @access public
  */
 	public function getControlSource($field = null) {
-		$controlSources['menu_type'] = array('default' => '公開ページ', 'admin' => '管理画面');
-		return $controlSources[$field];
+		$controlSources = array(
+			'menu_type' => array(
+				1 => 'コンテンツ', 
+				2 => 'フォルダ', 
+				3 => 'リンク'
+		));
+		if($field && !empty($controlSources[$field])) {
+			return $controlSources[$field];
+		} else {
+			return $controlSources;
+		}
 	}
 
 }
