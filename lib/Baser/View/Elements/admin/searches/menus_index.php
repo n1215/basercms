@@ -14,11 +14,10 @@
 ?>
 <?php echo $this->BcForm->create('Menu', array('url' => array('action' => 'index'))) ?>
 <p>
-	<?php echo $this->BcForm->label('Menu.status', '利用状態') ?> 
-	<?php echo $this->BcForm->input('Menu.status', array(
-		'type' => 'select',
-		'options' => $this->BcText->booleanMarkList(), 'empty' => '指定なし'
-	)); ?>　
+	<?php echo $this->BcForm->label('Menu.status', '公開状態') ?> 
+	<?php echo $this->BcForm->input('Menu.status', array('type' => 'select', 'options' => $this->BcText->booleanMarkList(), 'empty' => '指定なし'	)); ?>　
+	<?php echo $this->BcForm->label('Menu.enabled', '利用状態') ?> 
+	<?php echo $this->BcForm->input('Menu.enabled', array('type' => 'select', 'options' => $this->BcText->booleanMarkList(), 'empty' => '指定なし'	)); ?>　
 </p>
 <div class="button">
 <?php $this->BcBaser->link($this->BcBaser->getImg('admin/btn_search.png', array('alt' => '検索', 'class' => 'btn')), "javascript:void(0)", array('id' => 'BtnSearchSubmit')) ?> 

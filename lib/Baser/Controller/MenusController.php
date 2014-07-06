@@ -50,7 +50,7 @@ class MenusController extends AppController {
  * @var array
  * @access public
  */
-	public $helpers = array('BcTime', 'BcForm');
+	public $helpers = array('BcTime', 'BcForm', 'BcMenu');
 
 /**
  * サブメニューエレメント
@@ -78,22 +78,10 @@ class MenusController extends AppController {
  * @access public
  */
 	public function admin_index() {
-		/* セッション処理 */
-		if ($this->request->data) {
-			$this->Session->write('Filter.Menu.status', $this->request->data['Menu']['status']);
-		}
-		if (isset($this->request->params['named']['sortmode'])) {
-			$this->Session->write('SortMode.Menu', $this->request->params['named']['sortmode']);
-		}
-
-		$this->request->data = am($this->request->data, $this->_checkSession());
-
-		/* 並び替えモード */
-		if (!$this->Session->check('SortMode.Menu')) {
-			$this->set('sortmode', 0);
-		} else {
-			$this->set('sortmode', $this->Session->read('SortMode.Menu'));
-		}
+		$default = array(
+			'named' => array('num' => $this->siteConfigs['admin_list_num'])
+		);
+		$this->setViewConditions('Menu', array('default' => $default));
 
 		$conditions = $this->_createAdminIndexConditions($this->request->data);
 
@@ -281,49 +269,6 @@ class MenusController extends AppController {
 	}
 
 /**
- * 並び替えを更新する [AJAX]
- *
- * @access	public
- * @return boolean
- */
-	public function admin_ajax_update_sort() {
-		if ($this->request->data) {
-			$this->request->data = am($this->request->data, $this->_checkSession());
-			$conditions = $this->_createAdminIndexConditions($this->request->data);
-			if ($this->Menu->changeSort($this->request->data['Sort']['id'], $this->request->data['Sort']['offset'], $conditions)) {
-				echo true;
-			} else {
-				$this->ajaxError(500, '一度リロードしてから再実行してみてください。');
-			}
-		} else {
-			$this->ajaxError(500, '無効な処理です。');
-		}
-		exit();
-	}
-
-/**
- * セッションをチェックする
- *
- * @return array()
- * @access	protected
- */
-	protected function _checkSession() {
-		$data = array();
-		if ($this->Session->check('Filter.Menu.menu_type')) {
-			$data['menu_type'] = $this->Session->read('Filter.Menu.menu_type');
-		} else {
-			$this->Session->delete('Filter.Menu.menu_type');
-			$data['menu_type'] = 'default';
-		}
-		if ($this->Session->check('Filter.Menu.status')) {
-			$data['status'] = $this->Session->read('Filter.Menu.status');
-		} else {
-			$this->Session->delete('Filter.Menu.status');
-		}
-		return array('Menu' => $data);
-	}
-
-/**
  * 管理画面ページ一覧の検索条件を取得する
  *
  * @param array $data
@@ -337,10 +282,13 @@ class MenusController extends AppController {
 
 		/* 条件を生成 */
 		$conditions = array();
-		if (isset($data['status']) && $data['status'] !== '') {
-			$conditions['Menu.status'] = $data['status'];
+		
+		if (isset($data['enabled']) && $data['enabled'] !== '') {
+			$conditions['Menu.enabled'] = $data['enabled'];
 		}
-
+		if (isset($data['status']) && $data['status'] !== '') {
+			$conditions = array_merge($conditions, $this->Menu->getConditionAllowPublish());
+		}
 		return $conditions;
 	}
 

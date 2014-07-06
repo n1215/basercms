@@ -12,7 +12,7 @@
  * @license			http://basercms.net/license/index.html
  */
 $class = '';
-if (!$data['Menu']['status']) {
+if (!$this->BcMenu->enabled($data)) {
 	$class = ' class="disablerow"';
 }
 ?>
@@ -32,6 +32,7 @@ if (!$data['Menu']['status']) {
 		<?php endif ?>
 		<?php echo $data['Menu']['name'] ?>
 	</td>
+	<td style="text-align: center"><?php echo $this->BcText->booleanMark($this->BcMenu->allowPublish($data)) ?>
 	<td><?php echo $this->BcTime->format('Y-m-d', $data['Menu']['created']); ?><br />
 <?php echo $this->BcTime->format('Y-m-d', $data['Menu']['modified']); ?></td>
 </tr>

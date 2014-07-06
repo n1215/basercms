@@ -1392,4 +1392,20 @@ class BcAppModel extends Model {
 		return true;
 	}
 
+/**
+ * 公開済の conditions を取得
+ *
+ * @return array
+ * @access public
+ */
+	public function getConditionAllowPublish() {
+		$conditions[$this->alias . '.status'] = true;
+		$conditions[] = array('or' => array(array($this->alias . '.publish_begin <=' => date('Y-m-d H:i:s')),
+				array($this->alias . '.publish_begin' => null),
+				array($this->alias . '.publish_begin' => '0000-00-00 00:00:00')));
+		$conditions[] = array('or' => array(array($this->alias . '.publish_end >=' => date('Y-m-d H:i:s')),
+				array($this->alias . '.publish_end' => null),
+				array($this->alias . '.publish_end' => '0000-00-00 00:00:00')));
+		return $conditions;
+	}
 }
