@@ -1163,7 +1163,8 @@ class BcBaserHelper extends AppHelper {
 			'home' => 'Home',
 			'default' => 'Default',
 			'error' => 'Error',
-			'underscore' => false), $options);
+			'underscore' => false,
+			'delimiter' => '_'), $options);
 
 		extract($options);
 
@@ -1262,7 +1263,7 @@ class BcBaserHelper extends AppHelper {
 			if (!$detail) {
 				$contentsName = $aryUrl[0];
 			} else {
-				$contentsName = implode('_', $aryUrl);
+				$contentsName = implode($delimiter, $aryUrl);
 			}
 		} elseif (count($aryUrl) == 1 && $aryUrl[0] == 'index') {
 

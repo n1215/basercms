@@ -29,10 +29,7 @@ if (!isset($datas) || count($datas) != $count) {
 
 <tr id="Row<?php echo $data['Menu']['id'] ?>" class="<?php echo implode(' ', $rowClassies) ?>">
 	<td class="row-tools">
-		<?php $this->BcBaser->link($this->BcBaser->getImg('admin/icn_tool_unpublish.png', array('width' => 24, 'height' => 24, 'alt' => '非公開', 'class' => 'btn')), array('action' => 'ajax_disable', $data['Menu']['id']), array('title' => '非公開', 'class' => 'btn-unpublish')) ?>
-		<?php $this->BcBaser->link($this->BcBaser->getImg('admin/icn_tool_publish.png', array('width' => 24, 'height' => 24, 'alt' => '公開', 'class' => 'btn')), array('action' => 'ajax_enable', $data['Menu']['id']), array('title' => '公開', 'class' => 'btn-publish')) ?>
 		<?php $this->BcBaser->link($this->BcBaser->getImg('admin/icn_tool_edit.png', array('width' => 24, 'height' => 24, 'alt' => '編集', 'class' => 'btn')), array('action' => 'edit', $data['Menu']['id']), array('title' => '編集')) ?>			
-		<?php $this->BcBaser->link($this->BcBaser->getImg('admin/icn_tool_delete.png', array('width' => 24, 'height' => 24, 'alt' => '削除', 'class' => 'btn')), array('action' => 'ajax_delete', $data['Menu']['id']), array('title' => '削除', 'class' => 'btn-delete')) ?>
 		<?php $this->BcBaser->link($this->BcBaser->getImg('admin/icn_tool_up.png', array('width' => 24, 'height' => 24, 'alt' => '上へ移動', 'class' => 'btn')), array('action' => 'ajax_up', $data['Menu']['id']), array_merge(array('class' => 'btn-up', 'title' => '上へ移動'), $btnUpStyle)) ?>
 		<?php $this->BcBaser->link($this->BcBaser->getImg('admin/icn_tool_down.png', array('width' => 24, 'height' => 24, 'alt' => '下へ移動', 'class' => 'btn')), array('action' => 'ajax_down', $data['Menu']['id']), array_merge(array('class' => 'btn-down', 'title' => '下へ移動'), $btnDownStyle)) ?>
 	</td>
@@ -53,6 +50,4 @@ if (!isset($datas) || count($datas) != $count) {
 		<?php endif ?>
 	</td>
 	<td width="50" style="text-align: center"><?php echo $this->BcText->booleanMark($this->BcMenu->allowPublish($data)) ?>
-	<td width="75"><?php echo $this->BcTime->format('Y-m-d', $data['Menu']['created']); ?></td>
-	<td width="75"><?php echo $this->BcTime->format('Y-m-d', $data['Menu']['modified']); ?></td>
 </tr>

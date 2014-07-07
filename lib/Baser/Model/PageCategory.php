@@ -661,10 +661,37 @@ class PageCategory extends AppModel {
 			'status'		=> 1,
 			'publish_begin' => null,
 			'publish_end'	=> null,
-			'link'			=> null,
+			'link'			=> $this->getPageCategoryUrl($data),
 			'edit_link'		=> '/admin/page_categories/edit/' . $data['id'],
 			'parent_id'		=> $parentId
 		);
+	}
+	
+/**
+ * カテゴリフォルダのパスを取得する
+ * 
+ * @param array $data ページカテゴリデータ
+ * @return string $path
+ * @access public
+ */
+	public function getPageCategoryUrl($data) {
+		if (isset($data['PageCategory'])) {
+			$data = $data['PageCategory'];
+		}
+
+		$url = '/';
+		$categoryName = $data['name'];
+		$parentId = $data['parent_id'];
+
+		if ($parentId) {
+			$categoryPath = $this->getPath($parentId);
+			if ($categoryPath) {
+				foreach ($categoryPath as $category) {
+					$url .= $category['PageCategory']['name'] . '/';
+				}
+			}
+		}
+		return $url . $categoryName . '/index';
 	}
 	
 }

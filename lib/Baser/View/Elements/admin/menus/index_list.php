@@ -25,8 +25,6 @@
 		<th>NO</th>
 		<th>メニュー名</th>
 		<th>公開状態</th>
-		<th>登録日</th>
-		<th>更新日</th>
 	</tr>
 </thead>
 <tbody>
@@ -56,7 +54,7 @@
 		<?php endforeach; ?>
 	<?php else: ?>
 		<tr>
-			<td colspan="5"><p class="no-data">データが見つかりませんでした。</p></td>
+			<td colspan="4"><p class="no-data">データが見つかりませんでした。</p></td>
 		</tr>
 	<?php endif; ?>
 </tbody>

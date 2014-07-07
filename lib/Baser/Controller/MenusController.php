@@ -78,6 +78,8 @@ class MenusController extends AppController {
  * @access public
  */
 	public function admin_index() {
+		
+		set_time_limit(0);
 		$default = array(
 			'named' => array('num' => $this->siteConfigs['admin_list_num'])
 		);
@@ -100,7 +102,7 @@ class MenusController extends AppController {
 			}
 			$datas[] = $menu;
 		}
-
+		
 		$this->set('datas', $datas);
 
 		if ($this->RequestHandler->isAjax() || !empty($this->request->query['ajax'])) {
@@ -372,6 +374,8 @@ class MenusController extends AppController {
 	}
 	
 	public function admin_reconstruction() {
+		
+		set_time_limit(0);
 		$Db = ConnectionManager::getDataSource('baser');
 		$Db->truncate('menus');
 		clearAllCache();
