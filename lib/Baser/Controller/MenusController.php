@@ -101,7 +101,7 @@ class MenusController extends AppController {
 			$datas[] = $menu;
 		}
 
-		$this->set('listDatas', $datas);
+		$this->set('datas', $datas);
 
 		if ($this->RequestHandler->isAjax() || !empty($this->request->query['ajax'])) {
 			$this->render('ajax_index');
@@ -191,30 +191,6 @@ class MenusController extends AppController {
 	}
 
 /**
- * [ADMIN] 一括削除
- *
- * @param int ID
- * @return void
- * @access public
- */
-	protected function _batch_del($ids) {
-		if ($ids) {
-			foreach ($ids as $id) {
-				// メッセージ用にデータを取得
-				$post = $this->Menu->read(null, $id);
-
-				/* 削除処理 */
-				if ($this->Menu->delete($id)) {
-					clearViewCache();
-					$message = 'メニュー「' . $post['Menu']['name'] . '」 を削除しました。';
-					$this->Menu->saveDbLog($message);
-				}
-			}
-		}
-		return true;
-	}
-
-/**
  * [ADMIN] 削除処理 (ajax)
  *
  * @param int ID
@@ -292,4 +268,37 @@ class MenusController extends AppController {
 		return $conditions;
 	}
 
+/**
+ * [ADMIN] カテゴリの並び替え順を上げる
+ * 
+ * @param int $id
+ * @return void 
+ * @access public
+ */
+	public function admin_ajax_up($id) {
+		if ($this->Menu->moveUp($id)) {
+			echo true;
+		} else {
+			$this->ajaxError(500, '一度リロードしてから再実行してみてください。');
+		}
+		exit();
+	}
+
+/**
+ * [ADMIN] カテゴリの並び替え順を下げる
+ * 
+ * @param int $id 
+ * @return void
+ * @access public
+ * @deprecated
+ */
+	public function admin_ajax_down($id) {
+		if ($this->Menu->moveDown($id)) {
+			echo true;
+		} else {
+			$this->ajaxError(500, '一度リロードしてから再実行してみてください。');
+		}
+		exit();
+	}
+	
 }

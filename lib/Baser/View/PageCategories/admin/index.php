@@ -144,7 +144,8 @@ $(function(){
 					}
 				});
 				
-				var targetRowClassies = targetRow.attr('class').split(' ')
+				var targetRowClassies = targetRow.attr('class').split(' ');
+				targetRowClassies = targetRowClassies.reverse();
 				var targetRowGroupClass;
 				$(targetRowClassies).each(function(){
 					if(this.match(/row-group/)) {
@@ -266,7 +267,7 @@ function parseClass(classText, type) {
 		}
 		i++;
 	});
-	classies.current = $(classies.group).first().get();
+	classies.current = $(classies.group).last()[0];
 	return classies;
 }
 </script>

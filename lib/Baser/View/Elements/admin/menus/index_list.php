@@ -15,22 +15,42 @@
 
 
 <table cellpadding="0" cellspacing="0" class="list-table sort-table" id="ListTable">
-	<thead>
-		<tr>
-			<th style="width:170px" class="list-tool">
-	<div>
-		<?php $this->BcBaser->link($this->BcBaser->getImg('admin/btn_add.png', array('width' => 69, 'height' => 18, 'alt' => '新規追加', 'class' => 'btn')), array('action' => 'add')) ?>
-	</div>
-</th>
-<th>メニュー名</th>
-<th>公開状態</th>
-<th>登録日<br />更新日</th>
-</tr>
+<thead>
+	<tr>
+		<th style="width:170px" class="list-tool">
+			<div>
+				<?php $this->BcBaser->link($this->BcBaser->getImg('admin/btn_add.png', array('width' => 69, 'height' => 18, 'alt' => '新規追加', 'class' => 'btn')), array('action' => 'add')) ?>
+			</div>
+		</th>
+		<th>メニュー名</th>
+		<th>公開状態</th>
+		<th>登録日<br />更新日</th>
+	</tr>
 </thead>
 <tbody>
-	<?php if (!empty($listDatas)): ?>
-		<?php foreach ($listDatas as $data): ?>
-			<?php $this->BcBaser->element('menus/index_row', array('data' => $data)) ?>
+	<?php if (!empty($datas)): ?>
+		<?php $currentDepth = 0 ?>
+		<?php foreach ($datas as $key => $data): ?>
+			<?php
+			$rowIdTmps[$data['Menu']['depth']] = $data['Menu']['id'];
+
+			// 階層が上がったタイミングで同階層よりしたのIDを削除
+			if ($currentDepth > $data['Menu']['depth']) {
+				$i = $data['Menu']['depth'] + 1;
+				while (isset($rowIdTmps[$i])) {
+					unset($rowIdTmps[$i]);
+					$i++;
+				}
+			}
+			$currentDepth = $data['Menu']['depth'];
+			$rowClassies = array();
+			foreach ($rowIdTmps as $rowIdTmp) {
+				$rowClassies[] = 'row-group-' . $rowIdTmp;
+			}
+			$rowClassies[] = 'depth-' . $data['Menu']['depth'];
+			?>
+			<?php $currentDepth = $data['Menu']['depth'] ?>
+			<?php $this->BcBaser->element('menus/index_row', array('datas' => $datas, 'data' => $data, 'count' => ($key + 1), 'rowClassies' => $rowClassies)) ?>
 		<?php endforeach; ?>
 	<?php else: ?>
 		<tr>
