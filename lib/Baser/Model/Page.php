@@ -53,7 +53,7 @@ class Page extends AppModel {
  * @var array
  * @access public
  */
-	public $actsAs = array('BcContentsManager', 'BcCache');
+	public $actsAs = array('BcContentsManager', 'BcCache', 'BcMenuManager');
 
 /**
  * 更新前のページファイルのパス
@@ -290,6 +290,9 @@ class Page extends AppModel {
 			}
 		}
 
+		// メニューに登録
+		$this->saveMenu($this->createMenu($data));
+		
 		// モバイルデータの生成
 		if (!empty($data['reflect_mobile'])) {
 			$this->refrect('mobile', $data);
@@ -1169,4 +1172,27 @@ class Page extends AppModel {
 		return $datas;
 	}
 
+/**
+ * メニューデータを生成する
+ * 
+ * @param array $data ページデータ
+ */
+	public function createMenu($data) {
+		if(isset($data['Page'])) {
+			$data = $data['Page'];
+		}
+		$parentId = $this->PageCategory->getMenuId($data['page_category_id']);
+		return array(
+			'id'			=> $data['id'],
+			'name'			=> $data['title'],
+			'menu_type'		=> 1,
+			'status'		=> $data['status'],
+			'publish_begin' => $data['publish_begin'],
+			'publish_end'	=> $data['publish_end'],
+			'link'			=> $data['url'],
+			'edit_link'		=> '/admin/pages/edit/' . $data['id'],
+			'parent_id'		=> $parentId
+		);
+	}
+	
 }

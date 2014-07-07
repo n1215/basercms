@@ -51,7 +51,7 @@ if (!isset($datas) || count($datas) != $count) {
 			<?php echo $data['Menu']['name'] ?>
 		<?php endif ?>
 	</td>
-	<td style="text-align: center"><?php echo $this->BcText->booleanMark($this->BcMenu->allowPublish($data)) ?>
-	<td width="80"><?php echo $this->BcTime->format('Y-m-d', $data['Menu']['created']); ?></td>
-	<td width="80"><?php echo $this->BcTime->format('Y-m-d', $data['Menu']['modified']); ?></td>
+	<td width="50" style="text-align: center"><?php echo $this->BcText->booleanMark($this->BcMenu->allowPublish($data)) ?>
+	<td width="75"><?php echo $this->BcTime->format('Y-m-d', $data['Menu']['created']); ?></td>
+	<td width="75"><?php echo $this->BcTime->format('Y-m-d', $data['Menu']['modified']); ?></td>
 </tr>

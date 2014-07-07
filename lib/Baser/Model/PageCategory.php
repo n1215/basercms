@@ -42,7 +42,7 @@ class PageCategory extends AppModel {
  * @var array
  * @access public
  */
-	public $actsAs = array('Tree', 'BcCache');
+	public $actsAs = array('Tree', 'BcCache', 'BcMenuManager');
 
 /**
  * hasMany
@@ -253,9 +253,14 @@ class PageCategory extends AppModel {
  * @access public
  */
 	public function afterSave($created, $options = array()) {
+		
 		if (!$created && $this->updateRelatedPage) {
 			$this->updateRelatedPageUrlRecursive($this->data['PageCategory']['id']);
 		}
+		
+		// メニューに登録
+		$this->saveMenu($this->createMenu($this->data));
+		
 	}
 
 /**
@@ -633,4 +638,33 @@ class PageCategory extends AppModel {
 		return 1;
 	}
 
+/**
+ * メニューデータを生成する
+ * 
+ * @param array $data ページカテゴリデータ
+ */
+	public function createMenu($data) {
+		if(isset($data['PageCategory'])) {
+			$data = $data['PageCategory'];
+		}
+		
+		$parentId = null;
+		$systemIds = array($this->getAgentId('mobile'), $this->getAgentId('smartphone'));
+		if(!in_array($data['parent_id'], $systemIds)) {
+			$parentId = $this->getMenuId($data['parent_id']);
+		}
+		
+		return array(
+			'id'			=> $data['id'],
+			'name'			=> $data['title'],
+			'menu_type'		=> 2,
+			'status'		=> 1,
+			'publish_begin' => null,
+			'publish_end'	=> null,
+			'link'			=> null,
+			'edit_link'		=> '/admin/page_categories/edit/' . $data['id'],
+			'parent_id'		=> $parentId
+		);
+	}
+	
 }

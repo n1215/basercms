@@ -263,7 +263,7 @@ class PageCategoriesController extends AppController {
 			$this->request->data['PageCategory']['page_category_type'] = $this->PageCategory->getType($this->request->data['PageCategory']['id']);
 		} else {
 
-			if (!$this->request->data['PageCategory']['parent_id']) {
+			if (empty($this->request->data['PageCategory']['parent_id'])) {
 				switch ($this->request->data['PageCategory']['page_category_type']) {
 					case 1:
 						$this->request->data['PageCategory']['parent_id'] = '';

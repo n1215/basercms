@@ -33,6 +33,7 @@ $(function(){
 			case "1":	// コンテンツ
 				$("#RowStatus").show();
 				$("#RowLinkUrl").show();
+				$("#MenuLink").attr('readonly', 'readonly').css('background-color', '#eee');
 				break;
 			case "2":	// フォルダ
 				$("#RowStatus").hide();
@@ -41,6 +42,7 @@ $(function(){
 			case "3":	// リンク
 				$("#RowStatus").hide();
 				$("#RowLinkUrl").show();
+				$("#MenuLink").removeAttr('readonly').css('background-color', '#FFF');
 				break;
 		}
 	}
@@ -110,11 +112,11 @@ $(function(){
 			<th class="col-head"><?php echo $this->BcForm->label('Menu.status', '公開状態') ?></th>
 			<td class="col-input">
 				<?php echo $statuses[$this->request->data['Menu']['status']] ?>　
-				（　<?php echo $this->BcTime->format('Y/m/d', $this->request->data['Menu']['publish_begin']) ?>
 				<?php if($this->request->data['Menu']['publish_begin'] || $this->request->data['Menu']['publish_end']): ?>
+				（　<?php echo $this->BcTime->format('Y/m/d', $this->request->data['Menu']['publish_begin']) ?>
 				　〜　
-				<?php endif ?>
 				<?php echo $this->BcTime->format('Y/m/d', $this->request->data['Menu']['publish_end']) ?>　）
+				<?php endif ?>
 			</td>
 		</tr>
 <?php endif ?>
