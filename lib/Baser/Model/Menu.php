@@ -99,4 +99,15 @@ class Menu extends AppModel {
 		return $datas;
 	}
 	
+	public function getIdByModel($modelName, $modelId) {
+		$id = $this->field('id', array(
+			'Menu.model' => $modelName,
+			'Menu.model_id' => $modelId
+		));
+		if(!$id) {
+			$id = null;
+		}
+		return $id;
+	}
+	
 }

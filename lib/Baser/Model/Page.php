@@ -1182,6 +1182,9 @@ class Page extends AppModel {
 			$data = $data['Page'];
 		}
 		$parentId = $this->PageCategory->getMenuId($data['page_category_id']);
+		if(!$data['title'] && $data['url'] = '/index') {
+			$data['title'] = 'ホーム';
+		}
 		return array(
 			'id'			=> $data['id'],
 			'name'			=> $data['title'],

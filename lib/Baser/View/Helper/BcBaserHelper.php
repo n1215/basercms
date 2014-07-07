@@ -2063,7 +2063,7 @@ END_FLASH;
 /**
  * メニューを出力する
  */
-	public function menu($id, $recursive) {
+	public function menu($id, $recursive = null) {
 		$this->_View->BcMenu->show($id, $recursive);
 	}
 	

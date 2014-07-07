@@ -371,4 +371,68 @@ class MenusController extends AppController {
 		}
 	}
 	
+	public function admin_reconstruction() {
+		$Db = ConnectionManager::getDataSource('baser');
+		$Db->truncate('menus');
+		clearAllCache();
+		
+		$PageCategory = ClassRegistry::init('PageCategory');
+		$excludeIds = array(
+			$PageCategory->getAgentId('mobile'),
+			$PageCategory->getAgentId('smartphone')
+		);
+		// 固定ページカテゴリ
+		$PageCategory->updateRelatedPage = false;
+		$datas = $PageCategory->find('all', array(
+			'recursive' => -1, 'order' => 'lft',
+			'conditions' => array(
+				'not' => array(
+					'PageCategory.id' => $excludeIds
+				)
+			)
+		));
+		if($datas) {
+			foreach($datas as $data) {
+				$PageCategory->set($data);
+				$PageCategory->afterSave(false);
+			}
+		}
+
+		// 固定ページ
+		$Page = ClassRegistry::init('Page');
+		$Page->contentSaving = false;
+		$Page->fileSave = false;
+		$Page->PageCategory = $PageCategory;
+		$datas = $Page->find('all', array('recursive' => -1,
+			'conditions' => array(
+				'or' => array(
+					'not' => array(
+						'Page.page_category_id' => $excludeIds
+					),
+					'Page.page_category_id' => null
+		))));
+		
+		if($datas) {
+			foreach($datas as $data) {
+				$Page->set($data);
+				$Page->afterSave(false);
+			}
+		}
+
+		// プラグイン
+		$PluginContent = ClassRegistry::init('PluginContent');
+		$datas = $PluginContent->find('all', array('recursive' => -1));
+		if($datas) {
+			foreach($datas as $data) {
+				$plugin = Inflector::camelize($data['PluginContent']['plugin']);
+				$Model = ClassRegistry::init($plugin . 'Content');
+				$Model->contentSaving = false;
+				$Model->read(null, $data['PluginContent']['content_id']);
+				$Model->afterSave(false);
+			}
+		}
+		$this->redirect(array('action' => 'index'));
+		
+	}
+	
 }

@@ -65,18 +65,7 @@ class BcMenuManagerBehavior extends ModelBehavior {
  * @return int Or false;
  */
 	public function getMenuId(Model $Model, $modelId) {
-		$id = $this->Menu->field('id', array(
-			'Menu.model' => $Model->alias,
-			'Menu.model_id' => $modelId
-		));
-		if(!$id) {
-			$id = null;
-		}
-		return $id;
-	}
-	
-	public function deleteMenu() {
-		
+		return $this->Menu->getIdByModel('id', $Model->alias, $modelId);
 	}
 	
 }

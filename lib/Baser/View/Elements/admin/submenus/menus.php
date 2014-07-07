@@ -20,6 +20,7 @@
 		<ul class="cleafix">
 			<li><?php $this->BcBaser->link('メニュー一覧', array('controller' => 'menus', 'action' => 'index')) ?></li>
 			<li><?php $this->BcBaser->link('新規メニューを登録', array('controller' => 'menus', 'action' => 'add')) ?></li>
+			<li><?php $this->BcBaser->link('メニュー再構築', array('controller' => 'menus', 'action' => 'reconstruction'), array(), 'メニューを初期化して再構築します。本当によろしいですか？') ?></li>
 		</ul>
 	</td>
 </tr>
