@@ -42,8 +42,14 @@ if (!isset($datas) || count($datas) != $count) {
 			<?php $this->BcBaser->img('admin/file.gif') ?>
 		<?php elseif($data['Menu']['menu_type'] == 2): ?>
 			<?php $this->BcBaser->img('admin/folder.gif') ?>
+		<?php elseif($data['Menu']['menu_type'] == 3): ?>
+			<?php $this->BcBaser->img('admin/link.gif') ?>
 		<?php endif ?>
-		<?php echo $data['Menu']['name'] ?>
+		<?php if($data['Menu']['menu_type'] != 2 && !empty($data['Menu']['link'])): ?>
+			<?php echo $this->BcBaser->link($data['Menu']['name'], $data['Menu']['link'], array('target' => '_blank')) ?>
+		<?php else: ?>
+			<?php echo $data['Menu']['name'] ?>
+		<?php endif ?>
 	</td>
 	<td style="text-align: center"><?php echo $this->BcText->booleanMark($this->BcMenu->allowPublish($data)) ?>
 	<td width="80"><?php echo $this->BcTime->format('Y-m-d', $data['Menu']['created']); ?></td>

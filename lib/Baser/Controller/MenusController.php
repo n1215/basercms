@@ -123,17 +123,16 @@ class MenusController extends AppController {
  */
 	public function admin_add() {
 		if (!$this->request->data) {
-			$this->request->data['Menu']['status'] = 0;
+			$this->request->data = array('Menu' => array(
+				'enabled' => 1,
+				'menu_type' => 2
+			));
 		} else {
-
 			/* 登録処理 */
 			if (!preg_match('/^http/is', $this->request->data['Menu']['link']) && !preg_match('/^\//is', $this->request->data['Menu']['link'])) {
 				$this->request->data['Menu']['link'] = '/' . $this->request->data['Menu']['link'];
 			}
-			$this->request->data['Menu']['no'] = $this->Menu->getMax('no') + 1;
-			$this->request->data['Menu']['sort'] = $this->Menu->getMax('sort') + 1;
 			$this->Menu->create($this->request->data);
-
 			// データを保存
 			if ($this->Menu->save()) {
 				clearViewCache();
@@ -145,6 +144,10 @@ class MenusController extends AppController {
 		}
 
 		/* 表示設定 */
+		$menuTypes = $this->Menu->getControlSource('menu_type');
+		unset($menuTypes[1]);
+		$this->set('menuTypes', $menuTypes);
+		$this->set('parents', $this->Menu->getDirList());
 		$this->subMenuElements = array('site_configs', 'menus');
 		$this->pageTitle = '新規メニュー登録';
 		$this->help = 'menus_form';
@@ -184,6 +187,9 @@ class MenusController extends AppController {
 		}
 
 		/* 表示設定 */
+		$menuTypes = $this->Menu->getControlSource('menu_type');
+		$this->set('menuTypes', $menuTypes);
+		$this->set('parents', $this->Menu->getDirList());
 		$this->subMenuElements = array('site_configs', 'menus');
 		$this->pageTitle = 'メニュー編集：' . $this->request->data['Menu']['name'];
 		$this->help = 'menus_form';

@@ -83,4 +83,20 @@ class Menu extends AppModel {
 		}
 	}
 
+/**
+ * フォルダリストを取得する
+ * 
+ * @return array
+ */
+	public function getDirList() {
+		$conditions = array('Menu.menu_type' => 2);
+		$datas = $this->generateTreeList($conditions);
+		foreach ($datas as $key => $data) {
+			if (preg_match("/^([_]+)([^_].*)$/i", $data, $matches)) {
+				$datas[$key] = str_replace('_', '　', $matches[1])  . '└' . $matches[2];
+			}
+		}
+		return $datas;
+	}
+	
 }
