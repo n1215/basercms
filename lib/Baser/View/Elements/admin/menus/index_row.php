@@ -36,6 +36,7 @@ if (!isset($datas) || count($datas) != $count) {
 		<?php $this->BcBaser->link($this->BcBaser->getImg('admin/icn_tool_up.png', array('width' => 24, 'height' => 24, 'alt' => '上へ移動', 'class' => 'btn')), array('action' => 'ajax_up', $data['Menu']['id']), array_merge(array('class' => 'btn-up', 'title' => '上へ移動'), $btnUpStyle)) ?>
 		<?php $this->BcBaser->link($this->BcBaser->getImg('admin/icn_tool_down.png', array('width' => 24, 'height' => 24, 'alt' => '下へ移動', 'class' => 'btn')), array('action' => 'ajax_down', $data['Menu']['id']), array_merge(array('class' => 'btn-down', 'title' => '下へ移動'), $btnDownStyle)) ?>
 	</td>
+	<td width="30"><?php echo $data['Menu']['id'] ?></td>
 	<td>
 		<?php echo $data['Menu']['prefix'] ?>
 		<?php if($data['Menu']['menu_type'] == 1): ?>

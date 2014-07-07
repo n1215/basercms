@@ -37,6 +37,7 @@ class BcMenuManagerBehavior extends ModelBehavior {
 		}
 		if(empty($data['model_id']) && !empty($data['id'])) {
 			$data['model_id'] = $data['id'];
+			unset($data['id']);
 		}
 		$data['model'] = $Model->alias;
 		$id = '';

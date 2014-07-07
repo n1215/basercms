@@ -38,7 +38,7 @@ class BlogContent extends BlogAppModel {
  * @var array
  * @access public
  */
-	public $actsAs = array('BcContentsManager', 'BcPluginContent', 'BcCache');
+	public $actsAs = array('BcContentsManager', 'BcPluginContent', 'BcCache', 'BcMenuManager');
 
 /**
  * hasMany
@@ -181,6 +181,10 @@ class BlogContent extends BlogAppModel {
 
 			$this->deleteContent($this->data['BlogContent']['id']);
 		}
+		
+		// メニューに登録
+		$this->saveMenu($this->createMenu($this->data));
+		
 	}
 
 /**
@@ -307,4 +311,27 @@ class BlogContent extends BlogAppModel {
 		return $data;
 	}
 
+/**
+ * メニューデータを生成する
+ * 
+ * @param array $data ページカテゴリデータ
+ */
+	public function createMenu($data) {
+		if(isset($data['BlogContent'])) {
+			$data = $data['BlogContent'];
+		}
+		
+		return array(
+			'id'			=> $data['id'],
+			'name'			=> $data['title'],
+			'menu_type'		=> 1,
+			'status'		=> $data['status'],
+			'publish_begin' => null,
+			'publish_end'	=> null,
+			'link'			=> '/' . $data['name'] . '/index',
+			'edit_link'		=> '/admin/blog/blog_contents/edit/' . $data['id'],
+			'parent_id'		=> null
+		);
+	}
+	
 }

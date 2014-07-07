@@ -53,4 +53,41 @@ class BcMenuHelper extends AppHelper {
 		}
 		return (int) $data['enabled'];
 	}
+	
+/**
+ * メニューをツリー表示する
+ * 
+ * @param int $id
+ * @param int $recursive
+ */
+	public function show($id = null, $recursive = null) {
+
+		$datas = $this->getTreeData($id, 1, $recursive);
+		$this->_View->BcBaser->element('menu', array('datas' => $datas));
+		
+	}
+/**
+ * メニューのツリーデータを取得する
+ * 
+ * @param int $parentId
+ * @param int $depth
+ * @return array
+ */
+	public function getTreeData($parentId = null, $depth = 1, $recursive = null) {
+		$Menu = ClassRegistry::init('Menu');
+		$conditions = array_merge(array('Menu.enabled' => true, 'Menu.parent_id' => $parentId), $Menu->getConditionAllowPublish());
+		$order = 'lft';
+		$fields = array('id', 'name', 'link', 'menu_type');
+		$datas = $Menu->find('all', compact('conditions', 'fields', 'order'));
+		foreach($datas as $key => $data) {
+			$datas[$key]['Menu']['depth'] = $depth;
+			if(!$recursive || $recursive > $depth) {
+				$datas[$key]['Menu']['children'] = $this->getTreeData($data['Menu']['id'], $depth + 1, $recursive);
+			} else {
+				$datas[$key]['Menu']['children'] = array();
+			}
+		}
+		return $datas;
+	}
+	
 }

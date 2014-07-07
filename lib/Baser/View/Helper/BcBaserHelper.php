@@ -155,7 +155,7 @@ class BcBaserHelper extends AppHelper {
 				} else {
 					$prefix = $this->request->params['prefix'];
 				}
-				return $Menu->find('all', array('order' => 'sort'));
+				return $this->_View->BcMenu->getTreeData(null, 1);
 			}
 		}
 		return '';
@@ -2059,4 +2059,12 @@ END_FLASH;
 	public function siteSearchForm($data = array(), $options = array()) {
 		$this->element('site_search_form', $data, $options);
 	}
+	
+/**
+ * メニューを出力する
+ */
+	public function menu($id, $recursive) {
+		$this->_View->BcMenu->show($id, $recursive);
+	}
+	
 }

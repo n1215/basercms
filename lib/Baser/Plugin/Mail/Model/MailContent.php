@@ -35,7 +35,7 @@ class MailContent extends MailAppModel {
  * @var array
  * @access public
  */
-	public $actsAs = array('BcContentsManager', 'BcPluginContent', 'BcCache');
+	public $actsAs = array('BcContentsManager', 'BcPluginContent', 'BcCache', 'BcMenuManager');
 
 /**
  * hasMany
@@ -225,6 +225,9 @@ class MailContent extends MailAppModel {
 		} else {
 			$this->deleteContent($this->data['MailContent']['id']);
 		}
+		
+		// メニューに登録
+		$this->saveMenu($this->createMenu($this->data));
 	}
 
 /**
@@ -305,4 +308,27 @@ class MailContent extends MailAppModel {
 		}
 	}
 
+/**
+ * メニューデータを生成する
+ * 
+ * @param array $data ページカテゴリデータ
+ */
+	public function createMenu($data) {
+		if(isset($data['MailContent'])) {
+			$data = $data['MailContent'];
+		}
+		
+		return array(
+			'id'			=> $data['id'],
+			'name'			=> $data['title'],
+			'menu_type'		=> 1,
+			'status'		=> $data['status'],
+			'publish_begin' => $data['publish_begin'],
+			'publish_end'	=> $data['publish_end'],
+			'link'			=> '/' . $data['name'] . '/index',
+			'edit_link'		=> '/admin/mail/mail_contents/edit/' . $data['id'],
+			'parent_id'		=> null
+		);
+	}
+	
 }

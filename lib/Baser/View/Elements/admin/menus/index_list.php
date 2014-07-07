@@ -22,6 +22,7 @@
 				<?php $this->BcBaser->link($this->BcBaser->getImg('admin/btn_add.png', array('width' => 69, 'height' => 18, 'alt' => '新規追加', 'class' => 'btn')), array('action' => 'add')) ?>
 			</div>
 		</th>
+		<th>NO</th>
 		<th>メニュー名</th>
 		<th>公開状態</th>
 		<th>登録日</th>
