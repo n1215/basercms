@@ -301,4 +301,68 @@ class MenusController extends AppController {
 		exit();
 	}
 	
+/**
+ * [ADMIN] 無効状態にする（AJAX）
+ * 
+ * @param string $blogContentId
+ * @param string $blogPostId beforeFilterで利用
+ * @param string $blogCommentId
+ * @return void
+ * @access public
+ */
+	public function admin_ajax_disable($id) {
+		if (!$id) {
+			$this->ajaxError(500, '無効な処理です。');
+		}
+		if ($this->_changeStatus($id, false)) {
+			exit(true);
+		} else {
+			$this->ajaxError(500, $this->Menu->validationErrors);
+		}
+		exit();
+	}
+
+/**
+ * [ADMIN] 有効状態にする（AJAX）
+ * 
+ * @param string $blogContentId
+ * @param string $blogPostId beforeFilterで利用
+ * @param string $blogCommentId
+ * @return void
+ * @access public
+ */
+	public function admin_ajax_enable($id) {
+		if (!$id) {
+			$this->ajaxError(500, '無効な処理です。');
+		}
+		if ($this->_changeStatus($id, true)) {
+			exit(true);
+		} else {
+			$this->ajaxError(500, $this->Menu->validationErrors);
+		}
+		exit();
+	}
+	
+/**
+ * ステータスを変更する
+ * 
+ * @param int $id
+ * @param boolean $status
+ * @return boolean 
+ */
+	protected function _changeStatus($id, $status) {
+		$statusTexts = array(0 => '利用不可', 1 => '利用可');
+		$data = $this->Menu->find('first', array('conditions' => array('Menu.id' => $id), 'recursive' => -1));
+		$data['Menu']['enabled'] = $status;
+		$this->Menu->set($data);
+		if ($this->Menu->save()) {
+			clearViewCache();
+			$statusText = $statusTexts[$status];
+			$this->Menu->saveDbLog('メニュー「' . $data['Menu']['name'] . '」 を' . $statusText . 'にしました。');
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 }

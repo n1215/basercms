@@ -59,12 +59,6 @@ class Menu extends AppModel {
 				'message' => 'メニュー名を入力してください。'),
 			array('rule' => array('maxLength', 20),
 				'message' => 'メニュー名は20文字以内で入力してください。')
-		),
-		'link' => array(
-			array('rule' => array('notEmpty'),
-				'message' => 'リンクURLを入力してください。'),
-			array('rule' => array('maxLength', 255),
-				'message' => 'リンクURLは255文字以内で入力してください。')
 		)
 	);
 
