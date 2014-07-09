@@ -68,4 +68,18 @@ class BcMenuManagerBehavior extends ModelBehavior {
 		return $this->Menu->getIdByModel( $Model->alias, $modelId);
 	}
 	
+/**
+ * コンテンツデータを削除する
+ * 
+ * @param Model $model
+ * @param string $url 
+ */
+	public function deleteMenu(Model $model, $id) {
+		if ($this->Menu->deleteAll(array('Menu.model' => $model->alias, 'Menu.model_id' => $id))) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 }

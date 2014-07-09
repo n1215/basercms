@@ -1507,15 +1507,11 @@ class BcBaserHelper extends AppHelper {
 
 		$pageList = $this->requestAction('/contents/get_page_list_recursive', array('pass' => array($pageCategoryId, $recursive)));
 		$params = array('pageList' => $pageList);
+		$options = array();
 		if (empty($_SESSION['Auth']['User'])) {
-			$params = am($params, array(
-				'cache' => array(
-					'time' => Configure::read('BcCache.duration'),
-					'key' => $pageCategoryId))
-			);
+			$options = array('cache' => array('config' => 'views', 'key' => 'element__sitemap_' . $pageCategoryId . '_' . $recursive));
 		}
-
-		$this->element('sitemap', $params);
+		$this->element('sitemap', $params, $options);
 	}
 
 /**
@@ -2064,7 +2060,7 @@ END_FLASH;
 /**
  * メニューを出力する
  */
-	public function menu($id, $recursive = null) {
+	public function menu($id = null, $recursive = null) {
 		$this->_View->BcMenu->show($id, $recursive);
 	}
 	

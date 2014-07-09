@@ -221,6 +221,16 @@ if (BC_INSTALLED) {
 		'serialize' => ($cacheEngine === 'File'),
 		'duration' => $cacheDuration
 	));
+	// エレメント
+	Cache::config('views', array(
+		'engine' => $cacheEngine,
+		'probability' => 100,
+		'path' => CACHE . 'views',
+		'prefix' => null,
+		'lock' => false,
+		'serialize' => ($cacheEngine === 'File'),
+		'duration' => $cacheDuration
+	));
 
 /**
  * サイト基本設定を読み込む

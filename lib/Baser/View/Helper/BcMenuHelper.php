@@ -63,7 +63,11 @@ class BcMenuHelper extends AppHelper {
 	public function show($id = null, $recursive = null) {
 
 		$datas = $this->getTreeData($id, 1, $recursive);
-		$this->_View->BcBaser->element('menu', array('datas' => $datas));
+		$options = array();
+		if (empty($_SESSION['Auth']['User'])) {
+			$options = array('cache' => array('config' => 'views', 'key' => 'element__menu_' . $id . '_' . $recursive));
+		}
+		$this->_View->BcBaser->element('menu', array('datas' => $datas), $options);
 		
 	}
 /**

@@ -397,8 +397,11 @@ class MenusController extends AppController {
 		));
 		if($datas) {
 			foreach($datas as $data) {
-				$PageCategory->set($data);
-				$PageCategory->afterSave(false);
+				$parent = $PageCategory->getPath($data['PageCategory']['id']);
+				if(!in_array($parent[0]['PageCategory']['id'], $excludeIds)) {
+					$PageCategory->set($data);
+					$PageCategory->afterSave(false);
+				}
 			}
 		}
 
@@ -418,8 +421,10 @@ class MenusController extends AppController {
 		
 		if($datas) {
 			foreach($datas as $data) {
-				$Page->set($data);
-				$Page->afterSave(false);
+				if(!preg_match('/^\/mobile\//', $data['Page']['url']) && !preg_match('/^\/smartphone\//', $data['Page']['url'])) {
+					$Page->set($data);
+					$Page->afterSave(false);
+				}
 			}
 		}
 

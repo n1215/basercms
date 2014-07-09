@@ -350,6 +350,7 @@ class PageCategory extends AppModel {
  */
 	public function beforeDelete($cascade = true) {
 		parent::beforeDelete($cascade);
+		$this->deleteMenu($this->id);
 		$id = $this->data['PageCategory']['id'];
 		if ($this->releaseRelatedPagesRecursive($id)) {
 			$path = $this->createPageCategoryFolder($this->find('first', array('conditions' => array('id' => $id))));

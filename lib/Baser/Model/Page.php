@@ -447,7 +447,7 @@ class Page extends AppModel {
  * @access public
  */
 	public function beforeDelete($cascade = true) {
-		return $this->deleteContent($this->id);
+		return ($this->deleteContent($this->id) && $this->deleteMenu($this->id));
 	}
 
 /**
