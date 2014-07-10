@@ -34,7 +34,7 @@ if (!isset($datas) || count($datas) != $count) {
 		<?php $this->BcBaser->link($this->BcBaser->getImg('admin/icn_tool_down.png', array('width' => 24, 'height' => 24, 'alt' => '下へ移動', 'class' => 'btn')), array('action' => 'ajax_down', $data['Menu']['id']), array_merge(array('class' => 'btn-down', 'title' => '下へ移動'), $btnDownStyle)) ?>
 	</td>
 	<td width="30"><?php echo $data['Menu']['id'] ?></td>
-	<td>
+	<td class="row-name">
 		<?php echo $data['Menu']['prefix'] ?>
 		<?php if($data['Menu']['menu_type'] == 1): ?>
 			<?php $this->BcBaser->img('admin/file.gif') ?>
@@ -45,6 +45,8 @@ if (!isset($datas) || count($datas) != $count) {
 		<?php endif ?>
 		<?php if($data['Menu']['menu_type'] != 2 && !empty($data['Menu']['link'])): ?>
 			<?php echo $this->BcBaser->link($data['Menu']['name'], $data['Menu']['link'], array('target' => '_blank')) ?>
+		<?php elseif($data['Menu']['menu_type'] == 2): ?>
+			<?php echo $this->BcBaser->link($data['Menu']['name'], 'javascript:void(0)', array('class' => 'folder', 'data-menu-id' => $data['Menu']['id'])) ?>
 		<?php else: ?>
 			<?php echo $data['Menu']['name'] ?>
 		<?php endif ?>

@@ -77,7 +77,7 @@ class MenusController extends AppController {
  * @return void
  * @access public
  */
-	public function admin_index() {
+	public function admin_index($parentId = null) {
 		
 		set_time_limit(0);
 		$default = array(
@@ -85,7 +85,7 @@ class MenusController extends AppController {
 		);
 		$this->setViewConditions('Menu', array('default' => $default));
 
-		$conditions = $this->_createAdminIndexConditions($this->request->data);
+		$conditions = $this->_createAdminIndexConditions($this->request->data, $parentId);
 
 		$treeList = $this->Menu->generateTreeList($conditions);
 		$menus = $this->Menu->find('all', array('conditions' => $conditions, 'order' => 'Menu.lft'));
@@ -106,7 +106,11 @@ class MenusController extends AppController {
 		$this->set('datas', $datas);
 
 		if ($this->RequestHandler->isAjax() || !empty($this->request->query['ajax'])) {
-			$this->render('ajax_index');
+			if ($parentId) {
+				$this->render('ajax_index');
+			} else {
+				$this->render('ajax_children');
+			}
 			return;
 		}
 
@@ -259,13 +263,17 @@ class MenusController extends AppController {
  * @return string
  * @access protected
  */
-	protected function _createAdminIndexConditions($data) {
+	protected function _createAdminIndexConditions($data, $parentId) {
 		if (isset($data['Menu'])) {
 			$data = $data['Menu'];
 		}
 
 		/* 条件を生成 */
-		$conditions = array();
+		if($parentId) {
+			$conditions = array('Menu.parent_id' => $parentId);
+		} else {
+			$conditions = array('Menu.parent_id' => null);
+		}
 		
 		if (isset($data['enabled']) && $data['enabled'] !== '') {
 			$conditions['Menu.enabled'] = $data['enabled'];

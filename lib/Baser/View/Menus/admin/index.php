@@ -230,7 +230,19 @@ $(function(){
 		}
 	};
 	$.baserAjaxDataList.init();
-	
+	$(".folder").click(function(){
+		var id = $(this).attr('data-menu-id');
+		var opened = $("#Row" + id).attr('data-opened');
+		var icon = $("#Row" + id + ' .row-name img');
+		p(opened);
+		if(opened) {
+			$("#Row" + id).attr('data-opened', '');
+			icon.attr('src', icon.attr('src').replace('icn_tool_open_folder.png', 'folder.gif'));
+		} else {
+			$("#Row" + id).attr('data-opened', 1);
+			icon.attr('src', icon.attr('src').replace('folder.gif', 'icn_tool_open_folder.png'));
+		}
+	});
 });
 /**
  * 上下移動ボタン用のクラスを解析する 
