@@ -26,7 +26,11 @@ $(function(){
 		initForm($(this).val());
 	});
 	
-	initForm($("input[name='data[Menu][menu_type]']:checked").val());
+	var menuType = $("input[name='data[Menu][menu_type]']:checked").val();
+	if(!menuType) {
+		menuType = $("#MenuMenuType").val();
+	}
+	initForm(menuType);
 	
 	function initForm(menuType) {
 		switch (menuType) {
@@ -72,8 +76,13 @@ $(function(){
 		<tr>
 			<th class="col-head"><?php echo $this->BcForm->label('Menu.parent_id', 'タイプ') ?>&nbsp</th>
 			<td class="col-input">
+<?php if($this->request->action == 'admin_add'): ?>
 				<?php echo $this->BcForm->input('Menu.menu_type', array('type' => 'radio', 'options' => $menuTypes)) ?>
 				<?php echo $this->BcForm->error('Menu.munu_type') ?>
+<?php elseif($this->request->action == 'admin_edit'): ?>
+				<?php echo $menuTypes[$this->BcForm->value('Menu.menu_type')] ?>
+				<?php echo $this->BcForm->input('Menu.menu_type', array('type' => 'hidden')) ?>
+<?php endif ?>
 			</td>
 		</tr>
 		<tr>
