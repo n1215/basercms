@@ -229,42 +229,95 @@ $(function(){
 			}
 		}
 	};
+	$.baserAjaxDataList.initRowId = function() {
+		return true;
+	}
+	
 	$.baserAjaxDataList.init();
-	$(".folder").click(function(){
+	
+	$(".folder").click(folderClickHandler);
+	
+/**
+ * フォルダクリック時イベント
+ */
+	function folderClickHandler(event) {
+		
 		var id = $(this).attr('data-menu-id');
 		var opened = $("#Row" + id).attr('data-opened');
 		var icon = $("#Row" + id + ' .row-name img');
-		p(opened);
 		if(opened) {
-			$("#Row" + id).attr('data-opened', '');
-			icon.attr('src', icon.attr('src').replace('icn_tool_open_folder.png', 'folder.gif'));
+			if($(".children-" + id).length) {
+				$(".children-" + id).hide(0, function(){
+					$("#Row" + id).attr('data-opened', '');
+					icon.attr('src', icon.attr('src').replace('icn_tool_open_folder.png', 'folder.gif'));
+				});
+			} else {
+				$("#Row" + id).attr('data-opened', '');
+				icon.attr('src', icon.attr('src').replace('icn_tool_open_folder.png', 'folder.gif'));
+			}
 		} else {
 			$("#Row" + id).attr('data-opened', 1);
 			icon.attr('src', icon.attr('src').replace('folder.gif', 'icn_tool_open_folder.png'));
+			if(!$(".children-" + id).length) {
+				var url = $(this).attr('href');
+				$.ajax({
+					type: "POST",
+					url: url,
+					beforeSend: function() {
+						$("#Waiting").show();
+					},
+					success: function(result){
+						if(!result) {
+						} else {
+							$("#Row" + id).after(result);
+							$(".children-" + id).hide();
+							$(".children-" + id).show();
+						}
+						$.baserAjaxDataList.init();
+						$(".children-" + id + " .folder").click(folderClickHandler);
+					},
+					error: function() {
+						$("#Waiting").hide();
+					},
+					complete: function() {
+						$("#Waiting").hide();
+					}
+				});
+			} else {
+				$(".children-" + id).show();
+				$(".children-" + id + "[data-opened='']").each(function(){
+					var childId = $(this).attr('id').replace('Row', '');
+					$(".children-" + childId).hide();
+				});
+			}
 		}
-	});
-});
+		return false;
+		
+	}
 /**
  * 上下移動ボタン用のクラスを解析する 
  */
-function parseClass(classText, type) {
-	var classies = {depth:0, group:[], current:null};
-	var matches = classText.match(/depth-[0-9]+/);
-	if( matches != null ) {
-		classies.depth = matches[0].replace('depth-', '');
-	}
-	var classTexts = classText.split(' ')
-	var i = 0;
-	$(classTexts).each(function(){
-		if(this.match(/row-group/)) {
-			var rowGroup = this.replace('row-group-', '');
-			classies.group.push(rowGroup);
+	function parseClass(classText, type) {
+		var classies = {depth:0, group:[], current:null};
+		var matches = classText.match(/depth-[0-9]+/);
+		if( matches != null ) {
+			classies.depth = matches[0].replace('depth-', '');
 		}
-		i++;
-	});
-	classies.current = $(classies.group).last()[0];
-	return classies;
-}
+		var classTexts = classText.split(' ')
+		var i = 0;
+		$(classTexts).each(function(){
+			if(this.match(/row-group/)) {
+				var rowGroup = this.replace('row-group-', '');
+				classies.group.push(rowGroup);
+			}
+			i++;
+		});
+		classies.current = $(classies.group).last()[0];
+		return classies;
+	}
+	
+});
+
 </script>
 
 

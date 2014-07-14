@@ -30,6 +30,14 @@
 		}
 		$currentDepth = $data['Menu']['depth'];
 		$rowClassies = array();
+		if(!empty($data['Menu']['path'])) {
+			foreach($data['Menu']['path'] as $path) {
+				$rowClassies[] = 'children-' . $path;
+			}
+		}
+		if(!empty($this->request->params['pass'][0])) {
+			$rowClassies[] = 'row-group-' . $this->request->params['pass'][0];
+		}
 		foreach ($rowIdTmps as $rowIdTmp) {
 			$rowClassies[] = 'row-group-' . $rowIdTmp;
 		}

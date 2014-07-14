@@ -46,7 +46,7 @@ if (!isset($datas) || count($datas) != $count) {
 		<?php if($data['Menu']['menu_type'] != 2 && !empty($data['Menu']['link'])): ?>
 			<?php echo $this->BcBaser->link($data['Menu']['name'], $data['Menu']['link'], array('target' => '_blank')) ?>
 		<?php elseif($data['Menu']['menu_type'] == 2): ?>
-			<?php echo $this->BcBaser->link($data['Menu']['name'], 'javascript:void(0)', array('class' => 'folder', 'data-menu-id' => $data['Menu']['id'])) ?>
+			<?php echo $this->BcBaser->link($data['Menu']['name'], array($data['Menu']['id'], $data['Menu']['depth'] + 1), array('class' => 'folder', 'data-menu-id' => $data['Menu']['id'])) ?>
 		<?php else: ?>
 			<?php echo $data['Menu']['name'] ?>
 		<?php endif ?>

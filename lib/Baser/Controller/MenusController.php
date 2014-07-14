@@ -77,7 +77,7 @@ class MenusController extends AppController {
  * @return void
  * @access public
  */
-	public function admin_index($parentId = null) {
+	public function admin_index($parentId = null, $depth = null) {
 		
 		set_time_limit(0);
 		$default = array(
@@ -86,17 +86,22 @@ class MenusController extends AppController {
 		$this->setViewConditions('Menu', array('default' => $default));
 
 		$conditions = $this->_createAdminIndexConditions($this->request->data, $parentId);
-
-		$treeList = $this->Menu->generateTreeList($conditions);
 		$menus = $this->Menu->find('all', array('conditions' => $conditions, 'order' => 'Menu.lft'));
 		
 		$datas = array();
 		foreach ($menus as $menu) {
-			$name = $treeList[$menu['Menu']['id']];
 			$menu['Menu']['prefix'] = '';
-			if (preg_match("/^([_]+)/i", $name, $matches)) {
-				$menu['Menu']['prefix'] = str_replace('_', '&nbsp&nbsp&nbsp', $matches[1])  . '└';
-				$menu['Menu']['depth'] = strlen($matches[1]);
+			$menu['Menu']['path'] = array();
+			if($parentId) {
+				$path = $this->Menu->getPath($menu['Menu']['id']);
+				if($path) {
+					$menu['Menu']['path'] = Hash::extract($path, '{n}.Menu.id');
+					unset($menu['Menu']['path'][count($menu['Menu']['path'])-1]);
+				}
+			}
+			if ($depth) {
+				$menu['Menu']['prefix'] = str_repeat('　　', $depth)  . '└';
+				$menu['Menu']['depth'] = $depth;
 			} else {
 				$menu['Menu']['depth'] = 0;
 			}
@@ -106,7 +111,7 @@ class MenusController extends AppController {
 		$this->set('datas', $datas);
 
 		if ($this->RequestHandler->isAjax() || !empty($this->request->query['ajax'])) {
-			if ($parentId) {
+			if (!$parentId) {
 				$this->render('ajax_index');
 			} else {
 				$this->render('ajax_children');
