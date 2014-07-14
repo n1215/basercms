@@ -396,7 +396,8 @@ class MenusController extends AppController {
 		// 固定ページカテゴリ
 		$PageCategory->updateRelatedPage = false;
 		$datas = $PageCategory->find('all', array(
-			'recursive' => -1, 'order' => 'lft',
+			'recursive' => -1, 
+			'order' => 'lft',
 			'conditions' => array(
 				'not' => array(
 					'PageCategory.id' => $excludeIds
@@ -418,8 +419,10 @@ class MenusController extends AppController {
 		$Page->contentSaving = false;
 		$Page->fileSave = false;
 		$Page->PageCategory = $PageCategory;
-		$datas = $Page->find('all', array('recursive' => -1,
-			'conditions' => array(
+		$datas = $Page->find('all', array(
+			'order'		=> 'sort ASC',
+			'recursive' => -1,
+			'conditions'=> array(
 				'or' => array(
 					'not' => array(
 						'Page.page_category_id' => $excludeIds
