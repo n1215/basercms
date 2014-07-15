@@ -291,7 +291,9 @@ class Page extends AppModel {
 		}
 
 		// メニューに登録
-		$this->saveMenu($this->createMenu($data));
+		if (!$this->isMobileUrl('mobile', $data['url']) && !$this->isMobileUrl('smartphone', $data['url'])) {
+			$this->saveMenu($this->createMenu($data));
+		}
 		
 		// モバイルデータの生成
 		if (!empty($data['reflect_mobile'])) {
@@ -1002,12 +1004,27 @@ class Page extends AppModel {
 		if (isset($data['Page'])) {
 			$data = $data['Page'];
 		}
-		$url = $this->removeAgentPrefixFromUrl($data['url']);
-		if (preg_match('/^\/' . Configure::read('BcAgent.' . $type . '.prefix') . '\//is', $url)) {
+		if ($this->isMobileUrl($type, $url)) {
 			// 対象ページがモバイルページの場合はfalseを返す
 			return false;
 		}
+		$url = $this->removeAgentPrefixFromUrl($data['url']);
 		return $this->field('id', array('Page.url' => '/' . Configure::read('BcAgent.' . $type . '.prefix') . $url));
+	}
+	
+/**
+ * PC以外用のURLかどうか判定する
+ * 
+ * @return boolean
+ */
+	public function isMobileUrl($type, $url) {
+		
+		if (preg_match('/^\/' . Configure::read('BcAgent.' . $type . '.prefix') . '\//is', $url)) {
+			// 対象ページがモバイルページの場合はfalseを返す
+			return true;
+		}
+		return false;
+		
 	}
 
 /**
