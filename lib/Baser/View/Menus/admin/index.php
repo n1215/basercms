@@ -97,7 +97,7 @@ $(function(){
 				var classies = parseClass($(this).attr('class'));
 				var childDepth = Number(classies.depth) + 1;
 				$(".depth-" + childDepth).each(function(){
-				if($(this).attr('class').search('row-group-'+classies.current) != -1) {
+				if($(this).attr('class').search('children-'+classies.current) != -1) {
 					depthGroup.push($(this));
 				}
 				});
@@ -183,7 +183,7 @@ $(function(){
 				var classies = parseClass($(this).attr('class'));
 				var childDepth = Number(classies.depth) + 1;
 				$(".depth-" + childDepth).each(function(){
-					if($(this).attr('class').search('row-group-'+classies.current) != -1) {
+					if($(this).attr('class').search('children-'+classies.current) != -1) {
 						depthGroup.push($(this));
 					}
 				});
