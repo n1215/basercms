@@ -44,11 +44,15 @@ class BcTextHelper extends TextHelper {
  * @return string ○ または ― 
  * @access public
  */
-	public function booleanMark($value) {
+	public function booleanMark($value, $options = array()) {
+		$options = array_merge(array(
+			'falseMark' => '―'
+		), $options);
+		
 		if ($value) {
 			return "○";
 		} else {
-			return "―";
+			return $options['falseMark'];
 		}
 	}
 

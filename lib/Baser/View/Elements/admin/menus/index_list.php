@@ -24,7 +24,7 @@
 		</th>
 		<th>NO</th>
 		<th>メニュー名</th>
-		<th>公開状態</th>
+		<th>コンテンツの公開状態</th>
 	</tr>
 </thead>
 <tbody>

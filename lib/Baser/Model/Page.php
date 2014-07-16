@@ -1004,7 +1004,7 @@ class Page extends AppModel {
 		if (isset($data['Page'])) {
 			$data = $data['Page'];
 		}
-		if ($this->isMobileUrl($type, $url)) {
+		if ($this->isMobileUrl($type, $data['url'])) {
 			// 対象ページがモバイルページの場合はfalseを返す
 			return false;
 		}

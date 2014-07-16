@@ -135,8 +135,9 @@ class MenusController extends AppController {
 	public function admin_add() {
 		if (!$this->request->data) {
 			$this->request->data = array('Menu' => array(
-				'enabled' => 1,
-				'menu_type' => 2
+				'enabled'	=> 1,
+				'menu_type'	=> 2,
+				'status'	=> 1
 			));
 		} else {
 			/* 登録処理 */
@@ -191,7 +192,7 @@ class MenusController extends AppController {
 			if ($this->Menu->save()) {
 				clearViewCache();
 				$this->setMessage('メニュー「' . $this->request->data['Menu']['name'] . '」を更新しました。', false, true);
-				$this->redirect(array('action' => 'index', $id));
+				$this->redirect(array('action' => 'index'));
 			} else {
 				$this->setMessage('入力エラーです。内容を修正してください。', true);
 			}

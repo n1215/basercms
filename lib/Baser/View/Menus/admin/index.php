@@ -20,10 +20,21 @@ $this->BcBaser->js(array(
 
 <script type="text/javascript">
 $(function(){
-
-	/**
-	 * 上へ移動
-	 */
+/**
+ * フォルダクリック
+ */
+	$.baserAjaxDataList.config.methods.tree = {
+		button: '',
+		confirm: '',
+		initList: function() {
+			$(".folder").unbind();
+			$(".folder").click(folderClickHandler);
+		}
+	};
+	
+/**
+ * 上へ移動
+ */
 	$.baserAjaxDataList.config.methods.up = {
 		button: '.btn-up',
 		confirm: '',
@@ -95,10 +106,10 @@ $(function(){
 				}
 			});
 			$(".depth-0:first").find(config.methods.up.button).hide();
-			
 		}
 		
 	};
+	
 /**
  * 下へ移動
  */
@@ -183,9 +194,10 @@ $(function(){
 			$(".depth-0:last").find(config.methods.down.button).hide();
 		}
 	};
-	/**
-	 * 削除
-	 */
+	
+/**
+ * 削除
+ */
 	$.baserAjaxDataList.config.methods.del = {
 		button: '.btn-delete',
 		confirm: 'このデータを本当に削除してもよろしいですか？\n※ このカテゴリに関連するページは、どのカテゴリにも関連しない状態として残ります。\n※ 削除したデータは元に戻すことができません。', 
@@ -229,13 +241,15 @@ $(function(){
 			}
 		}
 	};
+	
+/**
+ * 行ID初期化
+ * 
+ * 上から連番で割り振られる仕様ではうまく動作しないので、オーバーライド
+ */
 	$.baserAjaxDataList.initRowId = function() {
 		return true;
 	}
-	
-	$.baserAjaxDataList.init();
-	
-	$(".folder").click(folderClickHandler);
 	
 /**
  * フォルダクリック時イベント
@@ -273,8 +287,8 @@ $(function(){
 							$(".children-" + id).hide();
 							$(".children-" + id).show();
 						}
-						$.baserAjaxDataList.init();
-						$(".children-" + id + " .folder").click(folderClickHandler);
+						$.baserAjaxDataList.initList();
+						//$(".children-" + id + " .folder").click(folderClickHandler);
 					},
 					error: function() {
 						$("#Waiting").hide();
@@ -294,6 +308,7 @@ $(function(){
 		return false;
 		
 	}
+	
 /**
  * 上下移動ボタン用のクラスを解析する 
  */
@@ -315,6 +330,9 @@ $(function(){
 		classies.current = $(classies.group).last()[0];
 		return classies;
 	}
+	
+	// 初期化実行
+	$.baserAjaxDataList.init();
 	
 });
 

@@ -56,6 +56,8 @@ $(function(){
 
 <?php echo $this->BcForm->create('Menu') ?>
 <?php echo $this->BcForm->input('Menu.id', array('type' => 'hidden')) ?>
+<?php echo $this->BcForm->input('Menu.status', array('type' => 'hidden')) ?>
+
 <div class="section">
 	<table cellpadding="0" cellspacing="0" id="FormTable" class="form-table">
 		<?php if ($this->request->action == 'admin_edit'): ?>

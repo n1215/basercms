@@ -12,17 +12,11 @@
  * @license			http://basercms.net/license/index.html
  */
 $btnUpStyle = $btnDownStyle = array();
-if (!$this->BcMenu->enabled($data)) {
+if (!$this->BcMenu->enabled($data) || !$this->BcMenu->allowPublish($data)) {
 	$rowClassies[] = 'disablerow';
 	$rowClassies[] = 'unpublish';
 } else {
 	$rowClassies[] = 'publish';
-}
-if ($count != 1 || !isset($datas)) {
-	//$btnUpStyle = array('style' => 'display:none');
-}
-if (!isset($datas) || count($datas) != $count) {
-	//$btnDownStyle = array('style' => 'display:none');
 }
 ?>
 
@@ -51,5 +45,11 @@ if (!isset($datas) || count($datas) != $count) {
 			<?php echo $data['Menu']['name'] ?>
 		<?php endif ?>
 	</td>
-	<td width="50" style="text-align: center"><?php echo $this->BcText->booleanMark($this->BcMenu->allowPublish($data)) ?>
+	<td width="50" style="text-align: center">
+<?php if($data['Menu']['menu_type'] == 1): ?>
+		<?php echo $this->BcText->booleanMark($this->BcMenu->allowPublish($data), array('falseMark' => '×')) ?>
+<?php else: ?>
+		-
+<?php endif ?>
+	</td>
 </tr>
