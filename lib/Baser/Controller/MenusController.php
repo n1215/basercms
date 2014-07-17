@@ -141,7 +141,7 @@ class MenusController extends AppController {
 			));
 		} else {
 			/* 登録処理 */
-			if (!preg_match('/^http/is', $this->request->data['Menu']['link']) && !preg_match('/^\//is', $this->request->data['Menu']['link'])) {
+			if (!empty($this->request->data['Menu']['link']) && !preg_match('/^http/is', $this->request->data['Menu']['link']) && !preg_match('/^\//is', $this->request->data['Menu']['link'])) {
 				$this->request->data['Menu']['link'] = '/' . $this->request->data['Menu']['link'];
 			}
 			$this->Menu->create($this->request->data);
