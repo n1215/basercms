@@ -27,7 +27,6 @@ class SiteConfigsController extends AppController {
  * クラス名
  *
  * @var string
- * @access public
  */
 	public $name = 'SiteConfigs';
 
@@ -35,7 +34,6 @@ class SiteConfigsController extends AppController {
  * モデル
  *
  * @var array
- * @access public
  */
 	public $uses = array('SiteConfig', 'Menu', 'Page');
 
@@ -43,7 +41,6 @@ class SiteConfigsController extends AppController {
  * コンポーネント
  *
  * @var array
- * @access public
  */
 	public $components = array('BcAuth', 'Cookie', 'BcAuthConfigure', 'BcManager');
 
@@ -51,14 +48,12 @@ class SiteConfigsController extends AppController {
  * サブメニューエレメント
  *
  * @var array
- * @access public
  */
 	public $subMenuElements = array();
 
 /**
  * ヘルパー
  * @var array
- * @access public
  */
 	public $helpers = array('BcForm', 'BcPage');
 
@@ -66,24 +61,19 @@ class SiteConfigsController extends AppController {
  * ぱんくずナビ
  *
  * @var array
- * @access public
  */
 	public $crumbs = array(array('name' => 'システム設定', 'url' => array('controller' => 'site_configs', 'action' => 'form')));
 
 /**
  * beforeFilter
- *
- * @return void
  */
 	public function beforeFilter() {
+		$this->BcAuth->allow('admin_ajax_credit', 'jquery_base_url');
 		parent::beforeFilter();
 	}
 
 /**
  * [ADMIN] サイト基本設定
- *
- * @return void
- * @access public
  */
 	public function admin_form() {
 		$writableInstall = is_writable(APP . 'Config' . DS . 'install.php');
@@ -228,9 +218,6 @@ class SiteConfigsController extends AppController {
 
 /**
  * キャッシュファイルを全て削除する
- * 
- * @return void
- * @access public
  */
 	public function admin_del_cache() {
 		clearAllCache();
@@ -240,9 +227,6 @@ class SiteConfigsController extends AppController {
 
 /**
  * [ADMIN] PHPINFOを表示する
- * 
- * @return void
- * @access public
  */
 	public function admin_info() {
 		if (!empty($this->siteConfigs['demo_on'])) {
@@ -269,9 +253,6 @@ class SiteConfigsController extends AppController {
 
 /**
  * [ADMIN] PHP INFO
- * 
- * @return void
- * @access public
  */
 	public function admin_phpinfo() {
 		$this->layout = 'empty';
@@ -279,9 +260,6 @@ class SiteConfigsController extends AppController {
 
 /**
  * サイト基本設定データを取得する
- *
- * @return void
- * @access protected
  */
 	protected function _getSiteConfigData() {
 		$data['SiteConfig'] = $this->siteConfigs;
@@ -307,4 +285,58 @@ class SiteConfigsController extends AppController {
 		return $data;
 	}
 
+/**
+ * メールの送信テストを実行する
+ */
+	public function admin_check_sendmail () {
+		
+		if(empty( $this->request->data['SiteConfig'])) {
+			$this->ajaxError(500, 'データが送信できませんでした。');
+		}
+		$this->siteConfigs = $this->request->data['SiteConfig'];
+		if($this->sendMail($this->siteConfigs['email'], 'メール送信テスト', $this->siteConfigs['formal_name'] . " からのメール送信テストです。\n" . Configure::read('BcEnv.siteUrl'))) {
+			exit();
+		} else {
+			$this->ajaxError(500, 'ログを確認してください。');
+		}
+		
+	}
+	
+/**
+ * クレジット表示用データをレンダリング
+ */
+	public function admin_ajax_credit() {
+
+		$this->layout = 'ajax';
+		Configure::write('debug', 0);
+		
+		$specialThanks = array();
+		if (!Configure::read('Cache.disable') && Configure::read('debug') == 0) {
+			$specialThanks = Cache::read('special_thanks', '_cake_env_');
+		}
+	
+		if($specialThanks) {
+			$json = $specialThanks;
+		} else {
+			try {
+				$json = file_get_contents(Configure::read('BcApp.specialThanks'), true);
+			} catch (Exception $ex) {}
+			if($json) {
+				if (!Configure::read('Cache.disable')) {
+					Cache::write('special_thanks', $json, '_cake_env_');
+				}
+				$json = json_decode($json);
+			} else {
+				$json = null;
+			}
+
+		}
+		
+		if ($json == false) {
+			$this->ajaxError(500, 'スペシャルサンクスデータが取得できませんでした。');
+		}
+		$this->set('credits', $json);
+		
+	}
+	
 }

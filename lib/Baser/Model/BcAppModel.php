@@ -1408,4 +1408,22 @@ class BcAppModel extends Model {
 				array($this->alias . '.publish_end' => '0000-00-00 00:00:00')));
 		return $conditions;
 	}
+	
+/**
+ * ツリーより再帰的に削除する
+ * 
+ * @param int $id
+ * @return boolean
+ */
+	public function removeFromTreeRecursive($id) {
+		if(!$this->Behaviors->enabled('Tree')) {
+			return false;
+		}
+		$children = $this->children($id);
+		foreach($children as $child) {
+			$this->removeFromTree($child[$this->alias]['id'], true);
+		}
+		return $this->removeFromTree($id, true);
+	}
+	
 }

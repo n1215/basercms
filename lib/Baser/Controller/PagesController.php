@@ -590,7 +590,7 @@ class PagesController extends AppController {
 		// Consoleから requestAction で呼出された場合、getCacheTimeがうまくいかない
 		// Consoleの場合は実行しない
 		if (!isset($_SESSION['Auth']['User']) && !isConsole()) {
-			$this->helpers[] = 'Cache';
+			$this->helpers[] = 'BcCache';
 			$this->cacheAction = $this->Page->getCacheTime($checkUrl);
 		}
 
@@ -794,6 +794,18 @@ class PagesController extends AppController {
  */
 	public function admin_preview($id) {
 		$page = Cache::read('page_preview_' . $id, '_cake_core_');
+		
+		// 直接previewにアクセスした場合
+		if (empty($page) || !file_exists(TMP . 'pages_preview_' . $id . $this->ext)) {
+			$page = $this->Page->find('first', array('conditions' => array('Page.id' => $id)));
+			$contents = $this->Page->addBaserPageTag(null, $page['Page']['contents'], $page['Page']['title'], $page['Page']['description'], $page['Page']['code']);
+			$path = TMP . 'pages_preview_' . $id . $this->ext;
+			$file = new File($path);
+			$file->open('w');
+			$file->append($contents);
+			$file->close();
+			unset($file);
+		}
 
 		$settings = Configure::read('BcAgent');
 		foreach ($settings as $key => $setting) {

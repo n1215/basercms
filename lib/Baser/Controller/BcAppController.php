@@ -222,30 +222,6 @@ class BcAppController extends Controller {
 			}
 		}
 		
-		// $this->request->here の調整
-		// index 省略時の場合は、indexを追加
-		// .html がある場合は削除
-		// $this->request->here は、ビューキャッシュの命名規則に影響する為、
-		// 同一ページによる複数キャッシュの生成を防ぐ
-		if(!BcUtil::isAdminSystem() && $this->name == 'Pages') {
-			if($this->request->params['pass'][count($this->request->params['pass'])-1] == 'index' && !preg_match('/\/index$/', $this->request->here)) {
-				$this->request->here .= 'index';
-			}
-			$this->request->here = preg_replace('/\.html$/', '', $this->request->here);
-		} else {
-			if($this->request->action == 'index') {
-				list($here,) = explode('?', $this->request->here);
-				if(!empty($this->request->params['pass'])) {
-					foreach ($this->request->params['pass'] as $pass) {
-						$here = preg_replace('/\/' . $pass . '$/', '', $here);
-					}
-				}
-				if(!preg_match('/\/index$/', $here)) {
-					$this->request->here .= 'index';
-				}
-			}
-		}
-
 		/* 携帯用絵文字のモデルとコンポーネントを設定 */
 		// TODO 携帯をコンポーネントなどで判別し、携帯からのアクセスのみ実行させるようにする
 		// ※ コンストラクト時点で、$this->request->params['prefix']を利用できない為。
@@ -267,6 +243,12 @@ class BcAppController extends Controller {
 		// テーマを設定
 		$this->setTheme();
 
+		// TODO 管理画面は送信データチェックを行わない（全て対応させるのは大変なので暫定処置）
+		if (!empty($this->request->params['admin'])) {
+			$this->Security->validatePost = false;
+			$this->Security->csrfCheck = false;
+		}
+		
 		if (!BC_INSTALLED || Configure::read('BcRequest.isUpdater')) {
 			return;
 		}
@@ -416,11 +398,6 @@ class BcAppController extends Controller {
 			}
 		}
 
-		// TODO 管理画面は送信データチェックを行わない（全て対応させるのは大変なので暫定処置）
-		if (!empty($this->request->params['admin'])) {
-			$this->Security->validatePost = false;
-			$this->Security->csrfCheck = false;
-		}
 	}
 
 /**

@@ -40,8 +40,12 @@ CSS_END
 ?>
 
 <script type="text/javascript">
+	
 $(function(){
 
+	if($("#LoginCredit").html() == 1) {
+		$("body").hide();
+	}
 	$("body").prepend($("#Login"));
 	$("#"+$("#UserModel").html()+"Name").focus();
 	changeNavi("#"+$("#UserModel").html()+"Name");
@@ -68,7 +72,14 @@ $(function(){
 	});
 
 	if($("#LoginCredit").html() == 1) {
+		$("body").append($("<div>&nbsp;</div>").attr('id', 'Credit').show());
+		$("#LoginInner").css('color', '#FFF');
+		$("#HeaderInner").css('height', '70px');
+		$("#Logo").css('position', 'absolute');
+		$("#Logo").css('z-index', '10000');
 		changeView($("#LoginCredit").html());
+		// 本体がない場合にフッターが上にあがってしまうので一旦消してから表示
+		$("body").fadeIn(50);
 	}
 
 });
@@ -80,21 +91,11 @@ function changeNavi(target){
 	}
 }
 function changeView(creditOn) {
-
-	if(!$("#Credit").size()) {
-		return;
-	}
-
 	if(creditOn) {
 		credit();
-		$("#LoginInner").css('color', '#FFF');
-		$("#HeaderInner").css('height', '70px');
-		$("#Logo").css('position', 'absolute');
-		$("#Logo").css('z-index', '10000');
 	} else {
 		openCredit();
 	}
-
 }
 function openCredit(completeHandler) {
 	
