@@ -225,7 +225,7 @@ class MenusController extends AppController {
 		$post = $this->Menu->read(null, $id);
 
 		/* 削除処理 */
-		if ($this->Menu->delete($id)) {
+		if ($this->Menu->removeFromTreeRecursive($id)) {
 			clearViewCache();
 			$message = 'メニュー「' . $post['Menu']['name'] . '」 を削除しました。';
 			$this->Menu->saveDbLog($message);
@@ -252,7 +252,7 @@ class MenusController extends AppController {
 		$post = $this->Menu->read(null, $id);
 
 		/* 削除処理 */
-		if ($this->Menu->delete($id)) {
+		if ($this->Menu->removeFromTreeRecursive($id)) {
 			clearViewCache();
 			$this->setMessage('メニュー「' . $post['Menu']['name'] . '」 を削除しました。', false, true);
 		} else {
