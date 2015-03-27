@@ -491,7 +491,8 @@ class Page extends AppModel {
 		}
 
 		$data = array_merge(array('id' => '', 'contents' => '', 'title' => '', 'description' => '', 'code' => ''), $data);
-		$contents = $this->addBaserPageTag($data['id'], $data['contents'], $data['title'], $data['description'], $data['code']);
+		$contents = $data['contents'];
+		//$contents = $this->addBaserPageTag($data['id'], $data['contents'], $data['title'], $data['description'], $data['code']);
 
 		// 新しいページファイルのパスを取得する
 		$newPath = $this->_getPageFilePath($data);

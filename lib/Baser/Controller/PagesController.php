@@ -604,6 +604,17 @@ class PagesController extends AppController {
 		// >>>
 		$data = $this->Page->findByUrl($checkUrl);
 
+
+		$this->set(array(
+			'pageTitle' => $data['Page']['title'],
+			'page' => $data['Page'],
+			'keywords' => $data['Page']['keywords'],
+			'description' => $data['Page']['description'],
+			'pageCategory' => $data['PageCategory'],
+			'editLink' => array('admin' => true, 'controller' => 'pages', 'action' => 'edit', $data['Page']['id'])
+		));
+
+
 		$template = $layout = $agent = '';
 
 		if (Configure::read('BcRequest.agent')) {

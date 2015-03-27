@@ -67,22 +67,23 @@ class BcPageHelper extends Helper {
  */
 	public function beforeRender($viewFile) {
 		//if ($this->request->params['controller'] == 'pages' && ($this->request->params['action'] == 'display' || $this->request->params['action'] == 'smartphone_display') && isset($this->request->params['pass'][0])) {
-		if ($this->request->params['controller'] == 'pages' && preg_match('/(^|_)display$/', $this->request->params['action']) && isset($this->request->params['pass'][0])) {
+		if ($this->request->is('page')) {
 			// @TODO ページ機能が.html拡張子なしに統合できたらコメントアウトされたものに切り替える
 			//$this->request->data = $this->Page->findByUrl('/'.impload('/',$this->request->params['pass'][0]));
-			$param = Configure::read('BcRequest.pureUrl');
-			if ($param && preg_match('/\/$/is', $param)) {
-				$param .= 'index';
-			}
-			
-			if (Configure::read('BcRequest.agent')) {
-				$agentPrefix = Configure::read('BcRequest.agentPrefix');
-				if(empty($this->BcBaser->siteConfig['linked_pages_' . $agentPrefix])) {
-					$param = $agentPrefix . '/' . $param;
-				}
-			}
-			$param = preg_replace("/\.html$/", '', $param);
-			$this->request->data = $this->Page->findByUrl('/' . $param);
+//			$param = Configure::read('BcRequest.pureUrl');
+//			if ($param && preg_match('/\/$/is', $param)) {
+//				$param .= 'index';
+//			}
+//
+//			if (Configure::read('BcRequest.agent')) {
+//				$agentPrefix = Configure::read('BcRequest.agentPrefix');
+//				if(empty($this->BcBaser->siteConfig['linked_pages_' . $agentPrefix])) {
+//					$param = $agentPrefix . '/' . $param;
+//				}
+//			}
+//			$param = preg_replace("/\.html$/", '', $param);
+			$this->request->data['Page'] = $this->_View->get('page');
+			$this->request->data['PageCategory'] = $this->_View->get('pageCategory');
 		}
 	}
 
@@ -108,12 +109,7 @@ class BcPageHelper extends Helper {
  * @return array 失敗すると getCategory() は FALSE を返します。
  */
 	public function getCategory() {
-
-		if (!empty($this->request->data['PageCategory']['id'])) {
-			return $this->request->data['PageCategory'];
-		} else {
-			return false;
-		}
+		return $this->_View->get('pageCategory', false);
 	}
 
 /**
@@ -306,7 +302,7 @@ class BcPageHelper extends Helper {
 		if (Configure::read('BcRequest.agentPrefix')) {
 			$agent = Configure::read('BcRequest.agentPrefix');
 		}
-		$path = $this->_View->getVar('pagePath');
+		$path = $this->_View->get('pagePath');
 
 		if ($agent) {
 			$url = '/' . implode('/', $this->request->params['pass']);
