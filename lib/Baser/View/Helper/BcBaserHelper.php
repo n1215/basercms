@@ -308,11 +308,11 @@ class BcBaserHelper extends AppHelper {
  * @return string コンテンツタイトル
  */
 	public function getContentsTitle() {
-		if ($this->_View->name === 'CakeError' || empty($this->_View->pageTitle)) {
-			return $this->_View->get('pageTitle', '');
+		if ($this->_View->name === 'CakeError') {
+			return '';
 		}
 
-		return $this->_View->pageTitle;
+		return $this->_View->get('pageTitle', $this->_View->pageTitle);
 	}
 
 /**

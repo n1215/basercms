@@ -16,6 +16,13 @@
  * 固定ページコントローラー
  *
  * @package Baser.Controller
+ * @property Page $Page
+ * @property PageCategory $PageCategory
+ * @property BcAuthComponent $BcAuth
+ * @property BcAuthConfigureComponent $BcAuthConfigure
+ * @property CookieComponent $Cookie
+ * @property SessionComponent $Session
+ * @property array $paginate
  */
 class PagesController extends AppController {
 
@@ -34,7 +41,7 @@ class PagesController extends AppController {
  * @access public
  */
 	public $helpers = array(
-		'Html', 'Session', 'BcGooglemaps', 
+		'Html', 'Session', 'BcGooglemaps',
 		'BcXml', 'BcText',
 		'BcFreeze', 'BcPage'
 	);
@@ -160,7 +167,7 @@ class PagesController extends AppController {
 
 			$this->search = 'pages_index';
 			$template = 'index';
-			
+
 		} else {
 			switch ($this->request->data['ViewSetting']['page_type']) {
 				case '1':
@@ -175,7 +182,7 @@ class PagesController extends AppController {
 			}
 			$datas = $this->Page->treeList($cateogryId);
 			$this->set('datas', $datas);
-			if ($this->RequestHandler->isAjax() || !empty($this->request->query['ajax'])) {
+			if ($this->request->is('ajax') || !empty($this->request->query['ajax'])) {
 				Configure::write('debug', 0);
 				$this->render('ajax_index_tree');
 				return;
@@ -221,8 +228,8 @@ class PagesController extends AppController {
 				$this->request->data['Page']['page_category_id'] = $this->PageCategory->getAgentId('smartphone');
 			}
 			$this->request->data['Page']['url'] = $this->Page->getPageUrl($this->request->data);
-			
-			/*			 * * Pages.beforeAdd ** */
+
+			/* * * Pages.beforeAdd * * */
 			$event = $this->dispatchEvent('beforeAdd', array(
 				'data' => $this->request->data
 			));
@@ -455,7 +462,7 @@ class PagesController extends AppController {
 /**
  * DBに保存されているURLをビュー用のURLに変換する
  * 
- * @param string $url
+ * @param string $url URL
  * @return string
  */
 	public function convertViewUrl($url) {
@@ -533,9 +540,8 @@ class PagesController extends AppController {
 /**
  * ビューを表示する
  *
- * @param mixed
+ * @throws NotFoundException
  * @return void
- * @access public
  */
 	public function display() {
 		$path = func_get_args();
@@ -553,7 +559,7 @@ class PagesController extends AppController {
 			$this->notFound();
 		}
 		// <<<
-		
+
 		$count = count($path);
 		if (!$count) {
 			return $this->redirect('/');
@@ -593,7 +599,7 @@ class PagesController extends AppController {
 
 		$this->subMenuElements = array('default');
 		// <<<
-		
+
 		$this->set(array(
 			'page' => $page,
 			'subpage' => $subpage,
@@ -651,7 +657,7 @@ class PagesController extends AppController {
 			$template = implode('/', $path);
 		}
 		// <<<
-		
+
 		try {
 			// CUSTOMIZE MODIFY 2014/07/02 ryuring
 			// >>>
@@ -670,7 +676,7 @@ class PagesController extends AppController {
 /**
  * パンくずナビ用の配列を取得する
  *
- * @param string	$url
+ * @param string $url
  * @return array
  * @access protected
  */
@@ -717,9 +723,7 @@ class PagesController extends AppController {
 /**
  * [MOBILE] ビューを表示する
  *
- * @param mixed
  * @return void
- * @access public
  */
 	public function mobile_display() {
 		$path = func_get_args();
@@ -729,9 +733,7 @@ class PagesController extends AppController {
 /**
  * [SMARTPHONE] ビューを表示する
  *
- * @param mixed
  * @return void
- * @access public
  */
 	public function smartphone_display() {
 		$path = func_get_args();
@@ -799,7 +801,7 @@ class PagesController extends AppController {
  */
 	public function admin_preview($id) {
 		$page = Cache::read('page_preview_' . $id, '_cake_core_');
-		
+
 		// 直接previewにアクセスした場合
 		if (empty($page) || !file_exists(TMP . 'pages_preview_' . $id . $this->ext)) {
 			$page = $this->Page->find('first', array('conditions' => array('Page.id' => $id), 'recursive' => -1));
@@ -847,10 +849,10 @@ class PagesController extends AppController {
 
 		$this->request->url = $url;
 		Configure::write('BcRequest.pureUrl', $url);
-		$this->here = $this->base . '/' . $url;
+		$this->request->here = $this->request->base . '/' . $url;
 		$this->crumbs = $this->_getCrumbs('/' . $url);
 		$this->theme = $this->siteConfigs['theme'];
-		if(!empty($page['Page']['page_category_id'])) {
+		if (!empty($page['Page']['page_category_id'])) {
 			$this->layout = $this->Page->PageCategory->field('layout_template', array('PageCategory.id' => $page['Page']['page_category_id']));
 		}
 		$this->render(TMP . 'pages_preview_' . $id . $this->ext);
@@ -861,8 +863,7 @@ class PagesController extends AppController {
 /**
  * 並び替えを更新する [AJAX]
  *
- * @access public
- * @return boolean
+ * @return bool
  */
 	public function admin_ajax_update_sort() {
 		if ($this->request->data) {
@@ -1140,8 +1141,7 @@ class PagesController extends AppController {
  * 
  * @param int $pageCategoryId
  * @param int $ownerId
- * @return boolean
- * @access public
+ * @return bool
  */
 	public function checkCurrentEditable($pageCategoryId, $ownerId) {
 		$user = $this->BcAuth->user();
@@ -1163,7 +1163,7 @@ class PagesController extends AppController {
  * 一括削除
  * 
  * @param array $ids
- * @return boolean
+ * @return bool
  * @access protected
  */
 	protected function _batch_del($ids) {
@@ -1180,12 +1180,9 @@ class PagesController extends AppController {
 
 /**
  * [ADMIN] 無効状態にする（AJAX）
- * 
- * @param string $blogContentId
- * @param string $blogPostId beforeFilterで利用
- * @param string $blogCommentId
+ *
+ * @param string $id
  * @return void
- * @access public
  */
 	public function admin_ajax_unpublish($id) {
 		if (!$id) {
@@ -1202,11 +1199,8 @@ class PagesController extends AppController {
 /**
  * [ADMIN] 有効状態にする（AJAX）
  * 
- * @param string $blogContentId
- * @param string $blogPostId beforeFilterで利用
- * @param string $blogCommentId
+ * @param string $id
  * @return void
- * @access public
  */
 	public function admin_ajax_publish($id) {
 		if (!$id) {
@@ -1224,7 +1218,7 @@ class PagesController extends AppController {
  * 一括公開
  * 
  * @param array $ids
- * @return boolean
+ * @return bool
  * @access protected 
  */
 	protected function _batch_publish($ids) {
@@ -1240,7 +1234,7 @@ class PagesController extends AppController {
  * 一括非公開
  * 
  * @param array $ids
- * @return boolean
+ * @return bool
  * @access protected 
  */
 	protected function _batch_unpublish($ids) {
@@ -1256,7 +1250,7 @@ class PagesController extends AppController {
  * ステータスを変更する
  * 
  * @param int $id
- * @param boolean $status
+ * @param bool $status
  * @return boolean 
  */
 	protected function _changeStatus($id, $status) {
@@ -1283,7 +1277,6 @@ class PagesController extends AppController {
  *
  * @param int $id (page_id)
  * @return void
- * @access public
  */
 	public function admin_ajax_delete($id = null) {
 		if (!$id) {
@@ -1305,7 +1298,6 @@ class PagesController extends AppController {
  * 
  * @param int $id 
  * @return void
- * @access public
  */
 	public function admin_ajax_copy($id = null) {
 		$result = $this->Page->copy($id);
