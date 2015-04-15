@@ -973,5 +973,75 @@ class BlogHelper extends AppHelper {
 		$MailHelper = new MailHelper($this->_View);
 		$MailHelper->link($title, $contentsName, $datas, $options);
 	}
-	
+
+/**
+ * RSSのchannel要素を表すデータをRssHelperで利用するデータの形式に整形する
+ * 主にHTMLエンティティ化の回避のため
+ *
+ * @param array $channel RSSのchannel要素のデータ
+ * @return array
+ */
+	public function transformRssChannel($channel = array()) {
+		if (!isset($channel['title'])) {
+			$channel['title'] = $this->_View->fetch('title');
+		}
+
+		$cdataElems = array('title', 'description');
+
+		foreach($cdataElems as $key) {
+			$channel[$key] = $this->cdataRssChannelElem($channel[$key]);
+		}
+		return $channel;
+	}
+
+/**
+ * RSSのchannel要素の子要素のデータを<![CDATA[ ]]>で囲む形式に変換
+ *
+ * @param string $content 要素の中身の文字列
+ * @return array
+ */
+	protected function cdataRssChannelElem($content = '') {
+		return array(
+			'value' => $content,
+			'attrib' => array(),
+			'cdata' => true
+		);
+	}
+
+/**
+ * ブログ記事のデータをRSSのitem要素に変換
+ *
+ * @param array $data ブログの１記事分のデータ
+ * @return array
+ */
+	public function transformRssItem($data) {
+		$item = array(
+			'title' => $data['BlogPost']['name'],
+			'link' => '/' . $data['BlogContent']['name'] . '/archives/' . $data['BlogPost']['no'],
+			'guid' => '/' . $data['BlogContent']['name'] . '/archives/' . $data['BlogPost']['no'],
+			'category' => $data['BlogCategory']['title'],
+			'description' => $data['BlogPost']['content'] . $data['BlogPost']['detail'],
+			'pubDate' => $data['BlogPost']['posts_date']
+		);
+
+		$cdataElems = array('title', 'category', 'description');
+		foreach($cdataElems as $key) {
+			$item[$key] = $this->cdataRssItemElem($item[$key]);
+		}
+
+		return $item;
+	}
+
+/**
+ * RSSのitem要素の子要素のデータを<![CDATA[ ]]>で囲む形式に変換
+ *
+ * @param string $content 要素の中身の文字列
+ * @return array
+ */
+	protected function cdataRssItemElem($content) {
+		return array(
+			'value' => $content,
+			'cdata' => true,
+		);
+	}
 }

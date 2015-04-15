@@ -1,13 +1,12 @@
 <?php
-if (!isset($channel)):
+if (!isset($channel)) {
 	$channel = array();
-endif;
-if (!isset($channel['title'])):
-	$channel['title'] = $this->fetch('title');
-endif;
+}
 
 echo $this->Rss->document(
 	$this->Rss->channel(
-		array(), $channel, $this->fetch('content')
+		array(),
+		$this->Blog->transformRssChannel($channel),
+		$this->fetch('content')
 	)
 );
