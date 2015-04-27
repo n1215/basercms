@@ -23,7 +23,7 @@ class BlogHelper extends AppHelper {
  *
  * @var array
  */
-	public $helpers = array('Html', 'BcTime', 'BcBaser', 'BcUpload');
+	public $helpers = array('Html', 'BcTime', 'BcBaser', 'BcUpload', 'Rss');
 
 /**
  * ブログカテゴリモデル
@@ -1015,11 +1015,29 @@ class BlogHelper extends AppHelper {
  * @return array
  */
 	public function transformRssItem($data) {
+
+        $images = array(
+            array(
+                'url' => 'http://www.example.com/sample/image1.jpg',
+                'value' => 'キャプション1'
+            ),
+            array(
+                'url' => 'http://www.example.com/sample/image2.jpg',
+                'value' => 'キャプション２'
+            )
+        );
+
+        $imagesValue = $this->createRssItemImagesValue($images);
+
 		$item = array(
 			'title' => $data['BlogPost']['name'],
 			'link' => '/' . $data['BlogContent']['name'] . '/archives/' . $data['BlogPost']['no'],
 			'guid' => '/' . $data['BlogContent']['name'] . '/archives/' . $data['BlogPost']['no'],
 			'category' => $data['BlogCategory']['title'],
+            'images' => array(
+                'value' => $imagesValue,
+                'convertEntities' => false
+            ),
 			'description' => $data['BlogPost']['content'] . $data['BlogPost']['detail'],
 			'pubDate' => $data['BlogPost']['posts_date']
 		);
@@ -1031,6 +1049,19 @@ class BlogHelper extends AppHelper {
 
 		return $item;
 	}
+
+/**
+ * images要素の中身を生成
+ *
+ * @return string
+ */
+    protected function createRssItemImagesValue($images) {
+        $xml = '';
+        foreach($images as $image) {
+            $xml .= $this->Rss->elem('image', array('url' => $image['url']), $image['value']);
+        }
+        return $xml;
+    }
 
 /**
  * RSSのitem要素の子要素のデータを<![CDATA[ ]]>で囲む形式に変換
