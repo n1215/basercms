@@ -611,6 +611,7 @@ class BlogController extends BlogAppController {
 			$datasouce = strtolower(preg_replace('/^Database\/Bc/', '', $db->config['datasource']));
 
 			switch ($datasouce) {
+                case 'sqlserver':
 				case 'mysql':
 				case 'csv':
 					if ($year) {

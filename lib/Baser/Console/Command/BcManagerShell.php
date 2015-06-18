@@ -265,7 +265,7 @@ class BcManagerShell extends AppShell {
 
 		if (!empty($this->args[1])) {
 			$dbConfig['datasource'] = $this->args[1];
-			$datasources = array('mysql', 'postgres', 'sqlite', 'csv');
+			$datasources = array('mysql', 'postgres', 'sqlite', 'csv', 'sqlserver');
 			if (!in_array($dbConfig['datasource'], $datasources)) {
 				return false;
 			}
@@ -276,28 +276,28 @@ class BcManagerShell extends AppShell {
 		if (!empty($this->params['login'])) {
 			$dbConfig['login'] = $this->params['login'];
 		} else {
-			if ($dbConfig['datasource'] == 'mysql' || $dbConfig['datasource'] == 'postgres') {
+			if ($dbConfig['datasource'] == 'mysql' || $dbConfig['datasource'] == 'postgres' || $dbConfig['datasource'] = 'sqlserver') {
 				return false;
 			}
 		}
 		if (!empty($this->params['password'])) {
 			$dbConfig['password'] = $this->params['password'];
 		} else {
-			if ($dbConfig['datasource'] == 'mysql' || $dbConfig['datasource'] == 'postgres') {
+			if ($dbConfig['datasource'] == 'mysql' || $dbConfig['datasource'] == 'postgres' || $dbConfig['datasource'] = 'sqlserver') {
 				return false;
 			}
 		}
 		if (!empty($this->params['host'])) {
 			$dbConfig['host'] = $this->params['host'];
 		} else {
-			if ($dbConfig['datasource'] == 'mysql' || $dbConfig['datasource'] == 'postgres') {
+			if ($dbConfig['datasource'] == 'mysql' || $dbConfig['datasource'] == 'postgres' || $dbConfig['datasource'] = 'sqlserver') {
 				$dbConfig['host'] = 'localhost';
 			}
 		}
 		if (!empty($this->params['prefix'])) {
 			$dbConfig['prefix'] = $this->params['prefix'];
 		} else {
-			if ($dbConfig['datasource'] == 'mysql' || $dbConfig['datasource'] == 'postgres') {
+			if ($dbConfig['datasource'] == 'mysql' || $dbConfig['datasource'] == 'postgres' || $dbConfig['datasource'] = 'sqlserver') {
 				$dbConfig['prefix'] = 'mysite_';
 			}
 		}
@@ -308,7 +308,9 @@ class BcManagerShell extends AppShell {
 				$dbConfig['port'] = '3306';
 			} elseif ($dbConfig['datasource'] == 'postgres') {
 				$dbConfig['port'] = '5432';
-			}
+            } elseif ($dbConfig['datasource'] == 'sqlserver') {
+                $dbConfig['port'] = '1433';
+            }
 		}
 		if (!empty($this->params['database'])) {
 			$dbConfig['database'] = $this->params['database'];

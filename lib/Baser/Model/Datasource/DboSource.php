@@ -39,7 +39,7 @@ class DboSource extends DataSource {
  * @var array
  * @access	protected
  */
-	protected $_encodingMaps = array('utf8' => 'UTF-8', 'sjis' => 'SJIS', 'ujis' => 'EUC-JP');
+	protected $_encodingMaps = array('utf8' => 'UTF-8', 'sjis' => 'SJIS', 'ujis' => 'EUC-JP', PDO::SQLSRV_ENCODING_UTF8 => 'UTF-8');
 
 // <<<
 	
@@ -4045,6 +4045,9 @@ class DboSource extends DataSource {
 		$CakeSchema->connection = $this->configKeyName;
 		$compare = $CakeSchema->compare($old, $new);
 		$sql = $this->alterSchema($compare);
+        if(empty($sql)) {
+            return true;
+        }
 		return $this->execute($sql);
 	}
 
@@ -4210,7 +4213,7 @@ class DboSource extends DataSource {
 		if (isset($schema['tables'][$table]['indexes']['PRIMARY']['column'])) {
 			$indexField = $schema['tables'][$table]['indexes']['PRIMARY']['column'];
 		} else {
-			$indexField = '';
+			$indexField = 'id';
 		}
 
 		$datas = $this->loadCsvToArray($path, $encoding);
@@ -4238,7 +4241,10 @@ class DboSource extends DataSource {
 					'values' => implode(', ', $values)
 				);
 				$sql = $this->renderStatement('create', $query);
-				
+
+                if(empty($sql)) {
+                    return true;
+                }
 				try {
 					if (!$this->execute($sql)) {
 						return false;

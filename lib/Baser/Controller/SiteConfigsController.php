@@ -206,7 +206,7 @@ class SiteConfigsController extends AppController {
 	public function admin_info() {
 		
 		$this->pageTitle = '環境情報';
-		$datasources = array('csv' => 'CSV', 'sqlite' => 'SQLite', 'mysql' => 'MySQL', 'postgres' => 'PostgreSQL');
+		$datasources = array('csv' => 'CSV', 'sqlite' => 'SQLite', 'mysql' => 'MySQL', 'postgres' => 'PostgreSQL', 'sqlserver' => 'SQL Server');
 		$db = ConnectionManager::getDataSource('baser');
 		list($type, $name) = explode('/', $db->config['datasource'], 2);
 		$datasource = preg_replace('/^bc/', '', strtolower($name));

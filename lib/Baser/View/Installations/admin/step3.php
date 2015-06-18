@@ -102,7 +102,17 @@ $(document).ready( function() {
 			dbName = 'baser';
 			port = '5432';
 			prefix = 'mysite_';
-		} else if(dbType.val()=='sqlite') {
+		} else if (dbType.val()=='sqlserver') {
+            $('#dbHost').show(500);
+            $('#dbUser').show(500);
+            $('#dbInfo').show(500);
+            $('#checkdb').show();
+            $('#btnnext').hide();
+            host = 'localhost';
+            dbName = 'baser';
+            port = '1433';
+            prefix = 'mysite_';
+        } else if(dbType.val()=='sqlite') {
 			$('#dbHost').hide(500);
 			$('#dbUser').hide(500);
 			$('#dbInfo').hide(500);

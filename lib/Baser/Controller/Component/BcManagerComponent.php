@@ -205,6 +205,9 @@ class BcManagerComponent extends Component {
 			case 'csv' :
 				$name = 'Database/BcCsv';
 				break;
+            case 'sqlserver' :
+                $name = 'Database/BcSqlserver';
+                break;
 			default :
 		}
 		return $name;
@@ -463,7 +466,14 @@ class BcManagerComponent extends Component {
 			$file->write("\t'database' => '" . $database . "',\n");
 			$file->write("\t'schema' => '" . $schema . "',\n");
 			$file->write("\t'prefix' => '" . $prefix . "',\n");
-			$file->write("\t'encoding' => '" . $encoding . "'\n");
+
+            if($datasource === 'Database/BcSqlserver') {
+                $encoding = 'PDO::SQLSRV_ENCODING_UTF8';
+                $file->write("\t'encoding' => PDO::SQLSRV_ENCODING_UTF8\n");
+            } else {
+                $file->write("\t'encoding' => '" . $encoding . "'\n");
+            }
+
 			$file->write(");\n");
 
 			$file->write('public $plugin = array(' . "\n");
@@ -476,7 +486,14 @@ class BcManagerComponent extends Component {
 			$file->write("\t'database' => '" . $database . "',\n");
 			$file->write("\t'schema' => '" . $schema . "',\n");
 			$file->write("\t'prefix' => '" . $prefix . Configure::read('BcEnv.pluginDbPrefix') . "',\n");
-			$file->write("\t'encoding' => '" . $encoding . "'\n");
+
+            if($datasource === 'Database/BcSqlserver') {
+                $encoding = 'PDO::SQLSRV_ENCODING_UTF8';
+                $file->write("\t'encoding' => PDO::SQLSRV_ENCODING_UTF8\n");
+            } else {
+                $file->write("\t'encoding' => '" . $encoding . "'\n");
+            }
+
 			$file->write(");\n");
 
 			$file->write('public $test = array(' . "\n");
@@ -489,8 +506,15 @@ class BcManagerComponent extends Component {
 			$file->write("\t'database' => '" . $database . "',\n");
 			$file->write("\t'schema' => '" . $schema . "',\n");
 			$file->write("\t'prefix' => '" . $prefix . Configure::read('BcEnv.testDbPrefix') . "',\n");
-			$file->write("\t'encoding' => '" . $encoding . "'\n");
-			$file->write(");\n");
+
+            if($datasource === 'Database/BcSqlserver') {
+                $encoding = 'PDO::SQLSRV_ENCODING_UTF8';
+                $file->write("\t'encoding' => PDO::SQLSRV_ENCODING_UTF8\n");
+            } else {
+                $file->write("\t'encoding' => '" . $encoding . "'\n");
+            }
+
+            $file->write(");\n");
 			$file->write("}\n");
 
 			$file->close();
@@ -636,7 +660,6 @@ class BcManagerComponent extends Component {
 			}
 		} else {
 			if (!$this->loadDefaultDataPattern('baser', $dbConfig, $pattern, $theme, 'core', $coreExcludes)) {
-				$this->log("コアの初期データのロードに失敗しました。");
 				return false;
 			}
 			foreach ($corePlugins as $corePlugin) {
@@ -1100,6 +1123,7 @@ class BcManagerComponent extends Component {
 		// TODO schemaを有効活用すればここはスッキリしそうだが見送り
 		$datasource = strtolower(preg_replace('/^Database\/Bc/', '', $db->config['datasource']));
 		switch ($datasource) {
+            case 'sqlserver':
 			case 'mysql':
 				$sources = $db->listSources();
 				foreach ($sources as $source) {
@@ -1556,7 +1580,7 @@ class BcManagerComponent extends Component {
 /**
  * DB接続チェック
  * 
- * @param	string	$dbType 'MySQL' or 'Postgres' or 'SQLite' or 'CSV'
+ * @param	string	$dbType 'MySQL' or 'Postgres' or 'SQLite' or 'CSV' or 'SQL Server'
  * @param	string	$dbName データベース名 SQLiteの場合はファイルパス CSVの場合はディレクトリへのパス
  * @param	string	$dbUsername 接続ユーザ名 テキストDBの場合は不要
  * @param	string	$dbPassword 接続パスワード テキストDBの場合は不要
@@ -1592,7 +1616,16 @@ class BcManagerComponent extends Component {
 					$dsn .= ";port={$port}";
 				}
 				$pdo = new PDO($dsn, $login, $password);
-			} elseif ($datasource == 'sqlte') {
+			} elseif ($datasource == 'sqlserver') {
+                $dsn = "sqlsrv:database={$database}";
+                if ($host) {
+                    $dsn .= ";server={$host}";
+                }
+                if ($port) {
+                    //$dsn .= ";port={$port}";
+                }
+                $pdo = new PDO($dsn, $login, $password);
+            }  elseif ($datasource == 'sqlte') {
 				// すでにある場合
 				if (file_exists($database)) {
 					if (!is_writable($database)) {

@@ -507,6 +507,9 @@ class InstallationsController extends AppController {
 		if ($data['dbType'] == 'csv') {
 			$data['dbEncoding'] = 'sjis';
 		}
+        if ($data['dbType'] == 'sqlserver') {
+            $data['dbEncoding'] = PDO::SQLSRV_ENCODING_UTF8;
+        }
 
 		$this->Session->write('Installation.dbType', $data['dbType']);
 		$this->Session->write('Installation.dbHost', $data['dbHost']);
@@ -591,6 +594,11 @@ class InstallationsController extends AppController {
 		if (in_array('pgsql', $pdoDrivers)) {
 			$dbsource['postgres'] = 'PostgreSQL';
 		}
+
+        /* SQL Server利用可否 */
+        if (in_array('sqlsrv', $pdoDrivers)) {
+            $dbsource['sqlserver'] = 'SQL Server';
+        }
 
 		/* SQLite利用可否チェック */
 		// windowsは一旦非サポート
