@@ -407,6 +407,33 @@ class BcAppTest extends BaserTestCase {
 	}
 
 /**
+ * Eメールチェック マルチバイト許可
+ *
+ * @param string $check チェック対象文字列
+ * @param boolean $expect
+ * @dataProvider mbEmailDataProvider
+ */
+	public function testMbEmail($check, $expect) {
+		$result = $this->BcApp->mbEmail($check);
+		$this->assertEquals($expect, $result);
+	}
+
+	public function mbEmailDataProvider() {
+		return [
+			[['test@example.com'], true],
+			[['テスト@example.com'], true],
+			[['test@テスト.com'], true],
+			[['test@テスト.ですよ.com'], true],
+			[['test@テスト.com'], true],
+			[['テスト@テスト.com'], true],
+			[['テスト@テスト'], false],
+			[['テスト@com'], false],
+			[['テスト.example.com'], false],
+		];
+	}
+
+
+/**
  * データの重複チェックを行う
  */
 	public function testDuplicate() {

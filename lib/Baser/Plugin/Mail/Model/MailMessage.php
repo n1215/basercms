@@ -188,7 +188,7 @@ class MailMessage extends MailAppModel {
 				// メール形式
 				} elseif ($mailField['valid'] == 'VALID_EMAIL') {
 					$this->validate[$mailField['field_name']] = array('email' => array(
-							'rule' => array('email'),
+							'rule' => array('mbEmail'),
 							'message' => '形式が不正です。'
 					));
 				// 半角数字
