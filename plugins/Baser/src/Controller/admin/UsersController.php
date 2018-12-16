@@ -11,6 +11,8 @@
 namespace Baser\Controller\Admin;
 
 use Baser\Controller\AppController;
+use Baser\Service\Admin\UserService;
+use N1215\CakeCandle\Http\AssistedAction;
 
 /**
  * Users Controller
@@ -19,6 +21,7 @@ use Baser\Controller\AppController;
  */
 class UsersController extends AppController
 {
+    use AssistedAction;
 
     /**
      * Index method
@@ -27,6 +30,7 @@ class UsersController extends AppController
      */
     public function index()
     {
+        // todo PaginationをControllerから引き剥がしたい
         $this->paginate = [
             'contain' => ['UserGroups']
         ];
@@ -40,13 +44,12 @@ class UsersController extends AppController
      *
      * @param string|null $id User id.
      * @return void
+     * @param UserService $userService
      * @throws \Cake\Datasource\Exception\RecordNotFoundException
      */
-    public function view($id = null)
+    public function view($id, UserService $userService)
     {
-        $user = $this->Users->get($id, [
-            'contain' => ['UserGroups']
-        ]);
+        $user = $userService->get($id);
         $this->set('user', $user);
         $this->set('_serialize', ['user']);
     }
@@ -54,20 +57,24 @@ class UsersController extends AppController
     /**
      * Add method
      *
+     * @param UserService $userService
      * @return \Cake\Http\Response
      */
-    public function add()
+    public function add(UserService $userService)
     {
-        $user = $this->Users->newEntity();
+        $user = $userService->getNewEntity();
+
         if ($this->request->is('post')) {
-            $user = $this->Users->patchEntity($user, $this->request->getData());
-            if ($this->Users->save($user)) {
+            // todo 例外を使うか結果オブジェクトを作った方が良さそうな感じがする
+            $user = $userService->add($this->request->getData());
+            if ($user !== null) {
                 $this->Flash->success(__('The user has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
-        $userGroups = $this->Users->UserGroups->find('list', ['limit' => 200]);
+
+        $userGroups = $userService->listUserGroups();
         $this->set(compact('user', 'userGroups'));
         $this->set('_serialize', ['user']);
     }
@@ -76,23 +83,24 @@ class UsersController extends AppController
      * Edit method
      *
      * @param string|null $id User id.
+     * @param UserService $userService
      * @return void|\Cake\Http\Response
      * @throws \Cake\Network\Exception\NotFoundException
      */
-    public function edit($id = null)
+    public function edit($id = null, UserService $userService)
     {
-        $user = $this->Users->get($id, [
-            'contain' => []
-        ]);
+        $user = $userService->get($id);
+
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $user = $this->Users->patchEntity($user, $this->request->getData());
-            if ($this->Users->save($user)) {
+            $user = $userService->update($id, $this->request->getData());
+            if ($user !== null) {
                 $this->Flash->success(__('The user has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
-        $userGroups = $this->Users->UserGroups->find('list', ['limit' => 200]);
+        $userGroups = $userService->listUserGroups();
+
         $this->set(compact('user', 'userGroups'));
         $this->set('_serialize', ['user']);
     }
@@ -101,14 +109,15 @@ class UsersController extends AppController
      * Delete method
      *
      * @param string|null $id User id.
+     * @param UserService $userService
      * @return \Cake\Network\Response
      * @throws \Cake\Datasource\Exception\RecordNotFoundException
      */
-    public function delete($id = null)
+    public function delete($id = null, UserService $userService)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $user = $this->Users->get($id);
-        if ($this->Users->delete($user)) {
+
+        if ($userService->delete($id)) {
             $this->Flash->success(__('The user has been deleted.'));
         } else {
             $this->Flash->error(__('The user could not be deleted. Please, try again.'));

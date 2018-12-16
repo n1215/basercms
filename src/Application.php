@@ -14,11 +14,15 @@
  */
 namespace App;
 
+use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use DI\ContainerBuilder;
+use N1215\CakeCandle\ContainerBagLocator;
+use N1215\CakeCandle\Http\ContainerAwareApplication;
 
 /**
  * Application setup class.
@@ -28,6 +32,34 @@ use Cake\Routing\Middleware\RoutingMiddleware;
  */
 class Application extends BaseApplication
 {
+    use ContainerAwareApplication;
+
+    /**
+     * @return \DI\Container
+     * @throws \Exception
+     */
+    private function configureContainer()
+    {
+        $builder = new ContainerBuilder();
+        $builder->useAutowiring(true);
+        $builder->addDefinitions(__DIR__  . '/../plugins/Baser/config/container.php');
+        return $builder->build();
+    }
+
+    public function bootstrap()
+    {
+        try {
+            $container = $this->configureContainer();
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Failed to configure the di container.', 0, $e);
+        }
+
+        ContainerBagLocator::init($container);
+
+        parent::bootstrap();
+    }
+
+
     /**
      * Setup the middleware your application will use.
      *
